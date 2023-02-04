@@ -105,8 +105,9 @@ bool rvWeaponBlaster::UpdateAttack ( void ) {
 	// then start the shooting process.
 	if ( wsfl.attack && gameLocal.time >= nextAttackTime ) {
 		// Save the time which the fire button was pressed
-		if ( fireHeldTime == 0 ) {		
-			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
+		if ( fireHeldTime == 0 ) {
+			//changed fireRate to 50
+			nextAttackTime = gameLocal.time + (50 * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			fireHeldTime   = gameLocal.time;
 			viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, chargeGlow[0] );
 		}
@@ -348,9 +349,8 @@ stateResult_t rvWeaponBlaster::State_Charge ( const stateParms_t& parms ) {
 				f = chargeGlow[0] + f * (chargeGlow[1] - chargeGlow[0]);
 				f = idMath::ClampFloat ( chargeGlow[0], chargeGlow[1], f );
 				viewModel->SetShaderParm ( BLASTER_SPARM_CHARGEGLOW, f );
-				
-				if ( !wsfl.attack ) {
-					SetState ( "Fire", 0 );
+				if (!wsfl.attack) {
+					SetState("Fire", 0);
 					return SRESULT_DONE;
 				}
 				
@@ -427,13 +427,16 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 
 	
 			if ( gameLocal.time - fireHeldTime > chargeTime ) {	
-				Attack ( true, 1, spread, 0, 1.0f );
+				//changed shots to 75 and spread to 25
+				Attack ( true, 75, 25.0f, 0, 1.0f );
 				PlayEffect ( "fx_chargedflash", barrelJointView, false );
 				PlayAnim( ANIMCHANNEL_ALL, "chargedfire", parms.blendFrames );
 			} else {
-				Attack ( false, 1, spread, 0, 1.0f );
+				//changed from single fire to burst fire with slight delay
+				Attack ( false, 50, spread, 0, 1.0f );
 				PlayEffect ( "fx_normalflash", barrelJointView, false );
 				PlayAnim( ANIMCHANNEL_ALL, "fire", parms.blendFrames );
+
 			}
 			fireHeldTime = 0;
 			

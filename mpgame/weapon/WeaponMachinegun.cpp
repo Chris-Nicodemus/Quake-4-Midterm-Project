@@ -21,7 +21,7 @@ public:
 protected:
 
 	float				spreadZoom;
-	bool				fireHeld;
+	//bool				fireHeld;
 
 	bool				UpdateFlashlight	( void );
 	void				Flashlight			( bool on );
@@ -54,7 +54,7 @@ rvWeaponMachinegun::Spawn
 */
 void rvWeaponMachinegun::Spawn ( void ) {
 	spreadZoom = spawnArgs.GetFloat ( "spreadZoom" );
-	fireHeld   = false;
+	//fireHeld   = false;
 		
 	SetState ( "Raise", 0 );	
 	
@@ -68,7 +68,7 @@ rvWeaponMachinegun::Save
 */
 void rvWeaponMachinegun::Save ( idSaveGame *savefile ) const {
 	savefile->WriteFloat ( spreadZoom );
-	savefile->WriteBool ( fireHeld );
+	//savefile->WriteBool ( fireHeld );
 }
 
 /*
@@ -78,7 +78,7 @@ rvWeaponMachinegun::Restore
 */
 void rvWeaponMachinegun::Restore ( idRestoreGame *savefile ) {
 	savefile->ReadFloat ( spreadZoom );
-	savefile->ReadBool ( fireHeld );
+	//savefile->ReadBool ( fireHeld );
 }
 
 /*
@@ -187,16 +187,16 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 				return SRESULT_DONE;
 			}
 
-			if ( fireHeld && !wsfl.attack ) {
+			/*if (fireHeld && !wsfl.attack) {
 				fireHeld = false;
-			}
+			}*/
 			if ( !clipSize ) {
-				if ( !fireHeld && gameLocal.time > nextAttackTime && wsfl.attack && AmmoAvailable ( ) ) {
+				if ( /*!fireHeld &&*/ gameLocal.time > nextAttackTime && wsfl.attack && AmmoAvailable()) {
 					SetState ( "Fire", 0 );
 					return SRESULT_DONE;
 				}
 			} else {
-				if ( !fireHeld && gameLocal.time > nextAttackTime && wsfl.attack && AmmoInClip ( ) ) {
+				if ( /*!fireHeld &&*/ gameLocal.time > nextAttackTime && wsfl.attack && AmmoInClip ( ) ) {
 					SetState ( "Fire", 0 );
 					return SRESULT_DONE;
 				}  
@@ -226,19 +226,21 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 	};	
 	switch ( parms.stage ) {
 		case STAGE_INIT:
+			//turning off full auto and adding a reload animation that makes it similar to bolt action
 			if ( wsfl.zoom ) {
 				nextAttackTime = gameLocal.time + (altFireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 				Attack ( true, 1, spreadZoom, 0, 1.0f );
-				fireHeld = true;
+				//fireHeld = true;
 			} else {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 				Attack ( false, 1, spread, 0, 1.0f );
 			}
-			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	
+			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );
+			PlayAnim(ANIMCHANNEL_ALL, "reload", parms.blendFrames);
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
-			if ( !fireHeld && wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon ) {
+			if ( /*!fireHeld &&*/ wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon ) {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
 			}
