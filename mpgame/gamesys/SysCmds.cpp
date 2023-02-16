@@ -26,7 +26,7 @@
 // RAVEN END
 
 #ifdef _WIN32
-#include "TypeInfo.h"
+#include "TypeInfo"
 #else
 #include "NoGameTypeInfo.h"
 #endif
@@ -171,7 +171,7 @@ void Cmd_ListSpawnArgs_f( const idCmdArgs &args ) {
 
 	for ( i = 0; i < ent->spawnArgs.GetNumKeyVals(); i++ ) {
 		const idKeyValue *kv = ent->spawnArgs.GetKeyVal( i );
-		gameLocal.Printf( "\"%s\"  "S_COLOR_WHITE"\"%s\"\n", kv->GetKey().c_str(), kv->GetValue().c_str() );
+		gameLocal.Printf( "\"%s\"  " S_COLOR_WHITE "\"%s\"\n", kv->GetKey().c_str(), kv->GetValue().c_str() );
 	}
 }
 
@@ -3052,6 +3052,29 @@ void Cmd_ListMaps_f( const idCmdArgs& args ) {
 	gameLocal.mpGame.ListMaps();
 }
 
+void Cmd_NextWeapon_f(const idCmdArgs& args) {
+	printf("Got to the command /n");
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+	player->NextWeapon();
+}
+
+void Cmd_PrevWeapon_f(const idCmdArgs& args) {
+	printf("Got to the command /n");
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+	player->PrevWeapon();
+}
+
+void Cmd_ReloadWeapon_f(const idCmdArgs& args) {
+	printf("Got to the command /n");
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+	player->Reload();
+}
 /*
 =================
 idGameLocal::InitConsoleCommands
@@ -3067,6 +3090,9 @@ void idGameLocal::InitConsoleCommands( void ) {
 //	cmdSystem->AddCommand( "writeGameState",		WriteGameState_f,			CMD_FL_GAME,				"write game state" );
 //	cmdSystem->AddCommand( "testSaveGame",			TestSaveGame_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"test a save game for a level" );
 // RAVEN END
+	cmdSystem->AddCommand("nextWeapon", Cmd_NextWeapon_f, CMD_FL_GAME, "Switch to next weapon");
+	cmdSystem->AddCommand("prevWeapon", Cmd_PrevWeapon_f, CMD_FL_GAME, "Switch to next weapon");
+	cmdSystem->AddCommand("reload", Cmd_ReloadWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand( "game_memory",			idClass::DisplayInfo_f,		CMD_FL_GAME,				"displays game class info" );
 	cmdSystem->AddCommand( "listClasses",			idClass::ListClasses_f,		CMD_FL_GAME,				"lists game classes" );
 	cmdSystem->AddCommand( "listThreads",			idThread::ListThreads_f,	CMD_FL_GAME|CMD_FL_CHEAT,	"lists script threads" );

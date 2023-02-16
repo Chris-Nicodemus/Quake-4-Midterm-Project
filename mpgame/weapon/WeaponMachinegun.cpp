@@ -234,14 +234,14 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 				Attack ( false, 1, spread, 0, 1.0f );
 			}
-			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	
+			PlayAnim(ANIMCHANNEL_ALL, "fire", 1);
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
-			if ( !fireHeld && wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon ) {
+			/*if (!fireHeld && wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon) {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
-			}
+			}*/
 			if ( AnimDone ( ANIMCHANNEL_ALL, 0 ) ) {
 				SetState ( "Idle", 0 );
 				return SRESULT_DONE;

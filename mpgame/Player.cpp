@@ -8699,7 +8699,8 @@ void idPlayer::AdjustSpeed( void ) {
 		bobFrac = 1.0f;
 		speed = pm_speed.GetFloat();
 	} else {
-		speed = pm_walkspeed.GetFloat();
+		//changed to 240 was pm_walkspeed.GetFloat();
+		speed = 240.0f;
 		bobFrac = 0.0f;
 	}
 

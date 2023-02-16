@@ -242,6 +242,7 @@ void rvCTF_AssaultPoint::SetOwner ( int newOwner ) {
 }
 
 void rvCTF_AssaultPoint::Reset ( void ) {
+	printf("Got here");
 	owner = AS_NEUTRAL;
 	SetOwnerColor();
 }
