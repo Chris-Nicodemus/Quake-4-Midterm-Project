@@ -240,21 +240,21 @@ stateResult_t rvWeaponHyperblaster::State_Fire ( const stateParms_t& parms ) {
 				viewModel->SetShaderParm ( HYPERBLASTER_SPARM_BATTERY, 1.0f );		
 			}
 			
-			burst = gameLocal.time + 250.0;
+			burst = gameLocal.time + 170.0;
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
 			if (count == 0 ) {
 				count = 2;
-				PlayAnim(ANIMCHANNEL_ALL, "fire", 0);
+				PlayAnim(ANIMCHANNEL_ALL, "fire", 1);
 				SetState("Idle", 0);
 				return SRESULT_DONE;
 			}
 			else if ( ( gameLocal.time > burst ) ) {
-				burst = gameLocal.time + 250.0;
+				burst = gameLocal.time + 170.0;
 				count--;
 				Attack(false, 1, spread, 0, 1.0f);
-				PlayAnim(ANIMCHANNEL_ALL, "fire", 0);
+				PlayAnim(ANIMCHANNEL_ALL, "fire", 1);
 			}
 			/*if (wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() && !wsfl.lowerWeapon) {
 				SetState ( "Fire", 0 );

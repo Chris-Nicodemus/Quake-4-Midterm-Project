@@ -8697,10 +8697,10 @@ void idPlayer::AdjustSpeed( void ) {
 		bobFrac = 0.0f;
  	} else if ( !physicsObj.OnLadder() && ( usercmd.buttons & BUTTON_RUN ) && ( usercmd.forwardmove || usercmd.rightmove ) && ( usercmd.upmove >= 0 ) ) {
 		bobFrac = 1.0f;
-		speed = pm_speed.GetFloat();
+		speed = 250.0f;
 	} else {
-		//changed to 240 was pm_walkspeed.GetFloat();
-		speed = 240.0f;
+		//changed to 160 was pm_walkspeed.GetFloat();
+		speed = 290.0f;
 		bobFrac = 0.0f;
 	}
 
