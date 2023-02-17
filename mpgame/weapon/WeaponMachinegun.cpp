@@ -219,6 +219,9 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 rvWeaponMachinegun::State_Fire
 ================
 */
+//variables used to delay bolt action animation
+bool After = false;
+float cd;
 stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 	enum {
 		STAGE_INIT,
@@ -235,6 +238,9 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 				Attack ( false, 1, spread, 0, 1.0f );
 			}
 			PlayAnim(ANIMCHANNEL_ALL, "fire", 1);
+			//tells wait stage to do reload animation after a certain time
+			After = true;
+			cd = gameLocal.time + 50.0;
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
@@ -242,6 +248,11 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
 			}*/
+			//bolt action animation after each shot is fired
+			if ( After && ( gameLocal.time > cd ) ) {
+				PlayAnim(ANIMCHANNEL_ALL, "reload", parms.blendFrames);
+				After = false;
+			}
 			if ( AnimDone ( ANIMCHANNEL_ALL, 0 ) ) {
 				SetState ( "Idle", 0 );
 				return SRESULT_DONE;
