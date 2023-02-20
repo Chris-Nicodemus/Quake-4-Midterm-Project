@@ -174,6 +174,11 @@ stateResult_t rvWeaponHyperblaster::State_Idle( const stateParms_t& parms ) {
 			} else {
 				SetStatus ( WP_READY );
 			}
+			//Set max ammo to 27
+			if (TotalAmmoCount() > 27) {
+				int subtract = TotalAmmoCount() - 27;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), subtract);
+			}
 
 			SpinDown ( );
 
@@ -186,6 +191,11 @@ stateResult_t rvWeaponHyperblaster::State_Idle( const stateParms_t& parms ) {
 			return SRESULT_STAGE ( STAGE_WAIT );
 		
 		case STAGE_WAIT:			
+			//Set max ammo to 27
+			if (TotalAmmoCount() > 27) {
+				int subtract = TotalAmmoCount() - 27;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), subtract);
+			}
 			if ( wsfl.lowerWeapon ) {
 				SetState ( "Lower", 4 );
 				return SRESULT_DONE;
@@ -286,16 +296,18 @@ stateResult_t rvWeaponHyperblaster::State_Reload ( const stateParms_t& parms ) {
 			} else {
 				NetReload ( );
 			}
+
 			
 			SpinDown ( );
 
 			viewModel->SetShaderParm ( HYPERBLASTER_SPARM_BATTERY, 0 );
-			
+
 			SetStatus ( WP_RELOAD );
 			PlayAnim ( ANIMCHANNEL_ALL, "reload", parms.blendFrames );
 			return SRESULT_STAGE ( STAGE_WAIT );
 			
 		case STAGE_WAIT:
+
 			if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) ) {
 				AddToClip ( ClipSize() );
 				SetState ( "Idle", 4 );

@@ -148,6 +148,10 @@ stateResult_t rvWeaponRailgun::State_Idle( const stateParms_t& parms ) {
 				StartSound( "snd_idle_hum", SND_CHANNEL_BODY2, 0, false, NULL );
 				SetStatus ( WP_READY );
 			}
+			if (TotalAmmoCount() > 6) {
+				int subtract = TotalAmmoCount() - 6;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), subtract);
+			}
 			PlayCycle( ANIMCHANNEL_ALL, "idle", parms.blendFrames );
 			return SRESULT_STAGE ( STAGE_WAIT );
 		
@@ -161,6 +165,10 @@ stateResult_t rvWeaponRailgun::State_Idle( const stateParms_t& parms ) {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
 			}  
+			if (TotalAmmoCount() > 6) {
+				int subtract = TotalAmmoCount() - 6;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), subtract);
+			}
 			// Auto reload?
 			if (gameLocal.time > pause) {
 				if (AutoReload() && !AmmoInClip() && AmmoAvailable()) {

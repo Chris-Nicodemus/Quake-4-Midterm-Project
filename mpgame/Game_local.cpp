@@ -7761,7 +7761,7 @@ idEntity* idGameLocal::HitScan(
 		if ( g_perfTest_hitscanShort.GetBool() && !(hitscanDict.GetString("classname") == name) ) {
 			end		 = start + (dir.ToMat3() * idVec3(idMath::ClampFloat(0,2048,hitscanDict.GetFloat ( "range", "2048" )),0,0));
 		} else {
-			gameLocal.Printf(" Weapon Fired! Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
+			//gameLocal.Printf(" Weapon Fired! Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
 			end		 = start + (dir.ToMat3() * idVec3(hitscanDict.GetFloat ( "range", "40000" ),0,0));
 		}
 		if ( g_perfTest_hitscanBBox.GetBool() ) {
@@ -7785,7 +7785,6 @@ idEntity* idGameLocal::HitScan(
 					range = idMath::ClampFloat( 0.0f, 4096.0f, range );
 				}
 				end	= start + (dir * range);
-
 				idBounds traceBounds;
 				traceBounds.Zero();
 				traceBounds.ExpandSelf( hitscanDict.GetFloat( "trace_size", "0" ) );
@@ -7856,6 +7855,14 @@ idEntity* idGameLocal::HitScan(
 				reflect++;
 			}
 			
+			if ((hitscanDict.GetString("classname") == name) && (ent->GetPhysics()->GetContents() & CONTENTS_SOLID) || (tr.c.material && (tr.c.material->GetContentFlags() & CONTENTS_SOLID))) {
+				// Continue on walls
+				contents &= (~CONTENTS_SOLID);
+				gameLocal.Printf("Collision point is: (%f,%f,%f)\n", collisionPoint.x, collisionPoint.y, collisionPoint.z);
+				continue;
+			} else if ((tr.c.material->GetSurfaceFlags() & SURF_BOUNCE) && !hitscanDict.GetBool("noBounce")) {
+				reflect++;
+			}
 			// If the hit entity is bound to an actor use the actor instead
 			if ( ent->fl.takedamage && ent->GetTeamMaster( ) && ent->GetTeamMaster( )->IsType ( idActor::GetClassType() ) ) {
 				actualHitEnt = ent;
@@ -7947,17 +7954,34 @@ idEntity* idGameLocal::HitScan(
 			break;
 		}
 			
-		// Path effect 
-		fxDir = collisionPoint - fxOrigin;
-		fxDir.Normalize( );
-		PlayEffect( hitscanDict, "fx_path", fxOrigin, fxDir.ToMat3(), false, collisionPoint, false, false, EC_IGNORE, hitscanTint );	
-		if ( !ent->fl.takedamage && random.RandomFloat ( ) < tracerChance ) {
-			PlayEffect( hitscanDict, "fx_tracer", fxOrigin, fxDir.ToMat3(), false, collisionPoint );
-			tracer = true;
-		} else {
-			tracer = false;
-		}
 
+		//railgun path
+		if (hitscanDict.GetString("classname") == name) {
+			gameLocal.Printf("Executed Path\n");
+			fxDir = collisionPoint - fxOrigin;
+			fxDir.Normalize();
+			PlayEffect(hitscanDict, "fx_path", fxOrigin, dir.ToMat3(), false, tr.endpos, false, false, EC_IGNORE, hitscanTint);
+			if (!ent->fl.takedamage && random.RandomFloat() < tracerChance) {
+				PlayEffect(hitscanDict, "fx_tracer", fxOrigin, dir.ToMat3(), false, tr.endpos);
+				tracer = true;
+			}
+			else {
+				tracer = false;
+			}
+		}
+		else {
+			// Path effect 
+			fxDir = collisionPoint - fxOrigin;
+			fxDir.Normalize();
+			PlayEffect(hitscanDict, "fx_path", fxOrigin, fxDir.ToMat3(), false, collisionPoint, false, false, EC_IGNORE, hitscanTint);
+			if (!ent->fl.takedamage && random.RandomFloat() < tracerChance) {
+				PlayEffect(hitscanDict, "fx_tracer", fxOrigin, fxDir.ToMat3(), false, collisionPoint);
+				tracer = true;
+			}
+			else {
+				tracer = false;
+			}
+		}
 		if ( !reflect ) {
 			//on initial trace only
 			if ( hitscanDict.GetBool( "doWhizz" ) ) {

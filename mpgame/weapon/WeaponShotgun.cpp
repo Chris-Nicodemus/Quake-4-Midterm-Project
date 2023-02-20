@@ -118,6 +118,12 @@ stateResult_t rvWeaponShotgun::State_Idle( const stateParms_t& parms ) {
 			} else {
 				SetStatus( WP_READY );
 			}
+			//setting max ammo to 13
+			if (TotalAmmoCount() > 13)
+			{
+				int subtract = TotalAmmoCount() - 13;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(5, subtract);
+			}
 		
 			PlayCycle( ANIMCHANNEL_ALL, "idle", parms.blendFrames );
 			return SRESULT_STAGE ( STAGE_WAIT );
@@ -127,6 +133,11 @@ stateResult_t rvWeaponShotgun::State_Idle( const stateParms_t& parms ) {
 				SetState( "Lower", 4 );
 				return SRESULT_DONE;
 			}		
+			if (TotalAmmoCount() > 13)
+			{
+				int subtract = TotalAmmoCount() - 13;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(5, subtract);
+			}
 			if ( !clipSize ) {
 				if ( gameLocal.time > nextAttackTime && wsfl.attack && AmmoAvailable ( ) ) {
 					SetState( "Fire", 0 );
@@ -165,6 +176,8 @@ stateResult_t rvWeaponShotgun::State_Fire( const stateParms_t& parms ) {
 		case STAGE_INIT:
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			Attack( false, hitscans, spread, 0, 1.0f );
+			gameLocal.Printf("Ammo available: (%d)\n", TotalAmmoCount());
+			gameLocal.Printf("Ammo type: (%d)\n", GetAmmoType());
 			PlayAnim( ANIMCHANNEL_ALL, "fire", 0 );	
 			return SRESULT_STAGE( STAGE_WAIT );
 	

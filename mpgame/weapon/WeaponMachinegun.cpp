@@ -174,6 +174,12 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 			} else {
 				SetStatus ( WP_READY );
 			}
+			//setting max ammo to 20
+			if (TotalAmmoCount() > 20)
+			{
+				int subtract = TotalAmmoCount() - 20;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(2, subtract);
+			}
 		
 			PlayCycle( ANIMCHANNEL_ALL, "idle", parms.blendFrames );
 			return SRESULT_STAGE ( STAGE_WAIT );
@@ -185,6 +191,11 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 			}		
 			if ( UpdateFlashlight ( ) ) {
 				return SRESULT_DONE;
+			}
+			if (TotalAmmoCount() > 20)
+			{
+				int subtract = TotalAmmoCount() - 20;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(2, subtract);
 			}
 
 			if ( fireHeld && !wsfl.attack ) {
@@ -232,6 +243,7 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 			if ( wsfl.zoom ) {
 				nextAttackTime = gameLocal.time + (altFireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 				Attack ( true, 1, spreadZoom, 0, 1.0f );
+
 				fireHeld = true;
 			} else {
 				nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
