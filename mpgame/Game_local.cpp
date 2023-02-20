@@ -7719,7 +7719,6 @@ idEntity* idGameLocal::HitScan(
 		areas[ 0 ] = pvs.GetPVSArea( origFxOrigin );
 		areas[ 1 ] = -1;
 	}
-
 	ignore    = owner;
 	penetrate = hitscanDict.GetFloat( "penetrate" );
 
@@ -7756,9 +7755,13 @@ idEntity* idGameLocal::HitScan(
 		
 		// Calculate the end point of the trace
 		start    = origin;
-		if ( g_perfTest_hitscanShort.GetBool() ) {
+		//changing hitscan so railgun punctures walls
+		//gameLocal.Printf("Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
+		idStr name = "hitscan_railgun_mp";
+		if ( g_perfTest_hitscanShort.GetBool() && !(hitscanDict.GetString("classname") == name) ) {
 			end		 = start + (dir.ToMat3() * idVec3(idMath::ClampFloat(0,2048,hitscanDict.GetFloat ( "range", "2048" )),0,0));
 		} else {
+			gameLocal.Printf(" Weapon Fired! Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
 			end		 = start + (dir.ToMat3() * idVec3(hitscanDict.GetFloat ( "range", "40000" ),0,0));
 		}
 		if ( g_perfTest_hitscanBBox.GetBool() ) {
@@ -7830,7 +7833,7 @@ idEntity* idGameLocal::HitScan(
 			actualHitEnt   = NULL;
 			start		   = collisionPoint;
 
-			// Keep tracing if we hit water
+			// Keep tracing if we hit water 
 			if ( (ent->GetPhysics()->GetContents() & CONTENTS_WATER) || (tr.c.material && (tr.c.material->GetContentFlags() & CONTENTS_WATER)) ) {
 				// Apply force to the water entity that was hit
 				ent->ApplyImpulse( owner, tr.c.id, tr.c.point, -(hitscanDict.GetFloat( "push", "5000" )) * tr.c.normal );
@@ -7852,7 +7855,7 @@ idEntity* idGameLocal::HitScan(
 			} else if ( (tr.c.material->GetSurfaceFlags ( ) & SURF_BOUNCE) && !hitscanDict.GetBool ( "noBounce" ) ) {
 				reflect++;
 			}
-
+			
 			// If the hit entity is bound to an actor use the actor instead
 			if ( ent->fl.takedamage && ent->GetTeamMaster( ) && ent->GetTeamMaster( )->IsType ( idActor::GetClassType() ) ) {
 				actualHitEnt = ent;

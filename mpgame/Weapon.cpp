@@ -2773,19 +2773,19 @@ void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const id
 	float spreadRad = DEG2RAD( spread );
 	idVec3 end;
 	for( i = 0; i < num_hitscans; i++ ) {
-		if( weaponDef->dict.GetBool( "machinegunSpreadStyle" ) ) {	
+		if (weaponDef->dict.GetBool("machinegunSpreadStyle") ) {
 			float r = gameLocal.random.RandomFloat() * idMath::PI * 2.0f;
-			float u = idMath::Sin( r ) * gameLocal.random.CRandomFloat() * spread * 16;
-			r = idMath::Cos( r ) * gameLocal.random.CRandomFloat() * spread * 16;
-#ifdef _XBOX
-			end = muzzleOrigin + ( ( 8192 * 16 ) * muzzleAxis[ 0 ] );
-			end += ( r * muzzleAxis[ 1 ] );
-			end += ( u * muzzleAxis[ 2 ] );
-#else
-			end = muzzleOrigin + ( ( 8192 * 16 ) * playerViewAxis[ 0 ] );
-			end += ( r * playerViewAxis[ 1 ] );
-			end += ( u * playerViewAxis[ 2 ] );
-#endif
+			float u = idMath::Sin(r) * gameLocal.random.CRandomFloat() * spread * 16;
+			r = idMath::Cos(r) * gameLocal.random.CRandomFloat() * spread * 16;
+		#ifdef _XBOX
+			end = muzzleOrigin + ((8192 * 16) * muzzleAxis[0]);
+			end += (r * muzzleAxis[1]);
+			end += (u * muzzleAxis[2]);
+		#else
+			end = muzzleOrigin + ((8192 * 16) * playerViewAxis[0]);
+			end += (r * playerViewAxis[1]);
+			end += (u * playerViewAxis[2]);
+		#endif
 			dir = end - muzzleOrigin;
 		} else if( weaponDef->dict.GetBool( "shotgunSpreadStyle" ) ) {
 			int radius;
@@ -2832,7 +2832,7 @@ void rvWeapon::Hitscan( const idDict& dict, const idVec3& muzzleOrigin, const id
 		}
 		dir.Normalize();
 
-		gameLocal.HitScan( dict, muzzleOrigin, dir, fxOrigin, owner, false, 1.0f, NULL, areas );
+		gameLocal.HitScan( dict, muzzleOrigin, dir, fxOrigin, owner, false, 1.0f, NULL, areas);
 
 		if ( gameLocal.isServer ) {
 			msg.WriteDir( dir, 24 );

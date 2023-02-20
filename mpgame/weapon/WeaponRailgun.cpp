@@ -122,10 +122,10 @@ void rvWeaponRailgun::Think ( void ) {
 ===============================================================================
 */
 
-CLASS_STATES_DECLARATION ( rvWeaponRailgun )
-	STATE ( "Idle",				rvWeaponRailgun::State_Idle)
-	STATE ( "Fire",				rvWeaponRailgun::State_Fire )
-	STATE ( "Reload",			rvWeaponRailgun::State_Reload )
+CLASS_STATES_DECLARATION(rvWeaponRailgun)
+STATE("Idle", rvWeaponRailgun::State_Idle)
+STATE("Fire", rvWeaponRailgun::State_Fire)
+STATE("Reload", rvWeaponRailgun::State_Reload)
 END_CLASS_STATES
 
 /*
@@ -133,6 +133,7 @@ END_CLASS_STATES
 rvWeaponRailgun::State_Idle
 ================
 */
+float pause;
 stateResult_t rvWeaponRailgun::State_Idle( const stateParms_t& parms ) {
 	enum {
 		STAGE_INIT,
@@ -161,13 +162,15 @@ stateResult_t rvWeaponRailgun::State_Idle( const stateParms_t& parms ) {
 				return SRESULT_DONE;
 			}  
 			// Auto reload?
-			if ( AutoReload() && !AmmoInClip ( ) && AmmoAvailable () ) {
-				SetState ( "reload", 2 );
-				return SRESULT_DONE;
-			}
-			if ( wsfl.netReload || (wsfl.reload && AmmoInClip() < ClipSize() && AmmoAvailable()>AmmoInClip()) ) {
-				SetState ( "Reload", 4 );
-				return SRESULT_DONE;			
+			if (gameLocal.time > pause) {
+				if (AutoReload() && !AmmoInClip() && AmmoAvailable()) {
+					SetState("reload", 2);
+					return SRESULT_DONE;
+				}
+				if (wsfl.netReload || (wsfl.reload && AmmoInClip() < ClipSize() && AmmoAvailable() > AmmoInClip())) {
+					SetState("Reload", 4);
+					return SRESULT_DONE;
+				}
 			}
 			return SRESULT_WAIT;
 	}
@@ -189,6 +192,7 @@ stateResult_t rvWeaponRailgun::State_Fire ( const stateParms_t& parms ) {
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
 			Attack ( false, 1, spread, 0, 1.0f );
 			PlayAnim ( ANIMCHANNEL_ALL, "fire", 0 );	
+			pause = gameLocal.time + 70.0;
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
@@ -213,32 +217,33 @@ stateResult_t rvWeaponRailgun::State_Reload ( const stateParms_t& parms ) {
 		STAGE_INIT,
 		STAGE_WAIT,
 	};	
-	switch ( parms.stage ) {
+	switch (parms.stage) {
 		case STAGE_INIT:
-			if ( wsfl.netReload ) {
+			if (wsfl.netReload) {
 				wsfl.netReload = false;
-			} else {
-				NetReload ( );
 			}
-						
-			SetStatus ( WP_RELOAD );
-			PlayAnim ( ANIMCHANNEL_ALL, "reload", parms.blendFrames );
-			return SRESULT_STAGE ( STAGE_WAIT );
-			
+			else {
+				NetReload();
+			}
+
+		SetStatus(WP_RELOAD);
+		PlayAnim(ANIMCHANNEL_ALL, "reload", parms.blendFrames);
+		return SRESULT_STAGE(STAGE_WAIT);
+
 		case STAGE_WAIT:
-			if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) ) {
-				AddToClip ( ClipSize() );
-				SetState ( "Idle", 4 );
+			if (AnimDone(ANIMCHANNEL_ALL, 4)) {
+				AddToClip(ClipSize());
+				SetState("Idle", 4);
 				return SRESULT_DONE;
 			}
-			if ( wsfl.lowerWeapon ) {
-				StopSound( SND_CHANNEL_BODY2, false );
-				SetState ( "Lower", 4 );
+			if (wsfl.lowerWeapon) {
+				StopSound(SND_CHANNEL_BODY2, false);
+				SetState("Lower", 4);
 				return SRESULT_DONE;
 			}
 			return SRESULT_WAIT;
-	}
-	return SRESULT_ERROR;
+		}
+		return SRESULT_ERROR;
 }
 
 /*
