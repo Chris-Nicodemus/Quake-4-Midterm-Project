@@ -577,6 +577,7 @@ rvWeaponNailgun::State_Idle
 Manage the idle state of the weapon
 ================
 */
+int maxAmmo;
 stateResult_t rvWeaponNailgun::State_Idle( const stateParms_t& parms ) {
 	enum {
 		STAGE_INIT,
@@ -589,6 +590,11 @@ stateResult_t rvWeaponNailgun::State_Idle( const stateParms_t& parms ) {
 			} else {
 				SetStatus ( WP_READY );
 			}			
+			if (TotalAmmoCount() > 19)
+			{
+				int maxAmmo = TotalAmmoCount() - 19;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), maxAmmo);
+			}
 			// Do we need to spin the drum down?
 			if ( DrumSpin ( NAILGUN_DRUMSPEED_SLOW, parms.blendFrames ) ) {
 				PostState ( "Idle", parms.blendFrames );
@@ -604,6 +610,11 @@ stateResult_t rvWeaponNailgun::State_Idle( const stateParms_t& parms ) {
 				return SRESULT_DONE;
 			}
 		
+			if (TotalAmmoCount() > 19)
+			{
+				int maxAmmo = TotalAmmoCount() - 19;
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), maxAmmo);
+			}
 			if ( !clipSize ) {
 				if ( gameLocal.time > nextAttackTime && wsfl.attack && AmmoAvailable ( ) ) {
 					SetState ( "Fire", 0 );

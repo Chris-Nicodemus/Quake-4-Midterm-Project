@@ -1056,7 +1056,7 @@ idInventory::UseAmmo
 ===============
 */
 bool idInventory::UseAmmo( int index, int amount ) {
-	if ( !HasAmmo( index, amount ) ) {
+	if ( !HasAmmo( index, amount ) && amount > 0) {
 		return false;
 	}
 

@@ -1429,7 +1429,6 @@ void idGameLocal::LoadMap( const char *mapName, int randseed ) {
 // RAVEN END
 	}
 	mapFileName = mapFile->GetName();
-	
 	assert(!idStr::Cmp(mapFileName, mapFile->GetName()));
 	
 // RAVEN BEGIN
@@ -7715,6 +7714,7 @@ idEntity* idGameLocal::HitScan(
 	idEntity*	ignore;
 	float		penetrate;
 
+	//gameLocal.Printf("Map file name is: (%s)", mapFileName);
 	if ( areas ) {
 		areas[ 0 ] = pvs.GetPVSArea( origFxOrigin );
 		areas[ 1 ] = -1;
@@ -7740,7 +7740,7 @@ idEntity* idGameLocal::HitScan(
 	if ( owner && owner->IsType( idPlayer::GetClassType() ) ) {
 		damageScale *= static_cast<idPlayer*>(owner)->PowerUpModifier(PMOD_PROJECTILE_DAMAGE);
 	}
-	
+	//int limit = 0;
 	// Run reflections
 	for ( reflect = hitscanDict.GetFloat( "reflect", "0" ); reflect >= 0; reflect-- ) {	
 		idVec3		start;
@@ -7758,7 +7758,7 @@ idEntity* idGameLocal::HitScan(
 		//changing hitscan so railgun punctures walls
 		//gameLocal.Printf("Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
 		idStr name = "hitscan_railgun_mp";
-		if ( g_perfTest_hitscanShort.GetBool() && !(hitscanDict.GetString("classname") == name) ) {
+		if ( g_perfTest_hitscanShort.GetBool() /* && !(hitscanDict.GetString("classname") == name)*/) {
 			end		 = start + (dir.ToMat3() * idVec3(idMath::ClampFloat(0,2048,hitscanDict.GetFloat ( "range", "2048" )),0,0));
 		} else {
 			//gameLocal.Printf(" Weapon Fired! Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
@@ -7801,15 +7801,25 @@ idEntity* idGameLocal::HitScan(
 			
 			// If the hitscan hit a no impact surface we can just return out
 			//assert( tr.c.material );
-			if ( tr.fraction >= 1.0f || (tr.c.material && tr.c.material->GetSurfaceFlags() & SURF_NOIMPACT) ) {					
-				PlayEffect( hitscanDict, "fx_path", fxOrigin, dir.ToMat3(), false, tr.endpos, false, false, EC_IGNORE, hitscanTint );	
-				if ( random.RandomFloat( ) < tracerChance ) {
-					PlayEffect( hitscanDict, "fx_tracer", fxOrigin, dir.ToMat3(), false, tr.endpos );
+			if ( tr.fraction >= 1.0f || (tr.c.material && tr.c.material->GetSurfaceFlags() & SURF_NOIMPACT) ) {		
+				/*if (hitscanDict.GetString("classname") == name && limit < 10) {
+					limit++;
+					// Continue on walls
+					contents &= (~CONTENTS_SOLID);
+					additionalIgnore = ent;
+					gameLocal.Printf("Got Here\n");
+					continue;
+				}
+				else {*/
+				PlayEffect(hitscanDict, "fx_path", fxOrigin, dir.ToMat3(), false, tr.endpos, false, false, EC_IGNORE, hitscanTint);
+				if (random.RandomFloat() < tracerChance) {
+					PlayEffect(hitscanDict, "fx_tracer", fxOrigin, dir.ToMat3(), false, tr.endpos);
 					tracer = true;
-				} else {
+				}
+				else {
 					tracer = false;
 				}
-
+				//}
 				if ( areas ) {
 					collisionArea = pvs.GetPVSArea( tr.endpos );
 					if ( collisionArea != areas[0] ) {
@@ -7855,14 +7865,23 @@ idEntity* idGameLocal::HitScan(
 				reflect++;
 			}
 			
-			if ((hitscanDict.GetString("classname") == name) && (ent->GetPhysics()->GetContents() & CONTENTS_SOLID) || (tr.c.material && (tr.c.material->GetContentFlags() & CONTENTS_SOLID))) {
+			/*if ((hitscanDict.GetString("classname") == name) && (ent->GetPhysics()->GetContents() & CONTENTS_SOLID) || (tr.c.material && (tr.c.material->GetContentFlags() & CONTENTS_SOLID))) {
 				// Continue on walls
 				contents &= (~CONTENTS_SOLID);
 				gameLocal.Printf("Collision point is: (%f,%f,%f)\n", collisionPoint.x, collisionPoint.y, collisionPoint.z);
+
+				if (!g_perfTest_weaponNoFX.GetBool()) {
+					if (ent->CanPlayImpactEffect(owner, ent)) {
+						if (ent->IsType(idMover::GetClassType())) {
+							ent->PlayEffect(GetEffect(hitscanDict, "fx_impact", tr.c.materialType), collisionPoint, tr.c.normal.ToMat3(), false, vec3_origin, false, false, EC_IMPACT, hitscanTint);
+						}
+						else {
+							gameLocal.PlayEffect(GetEffect(hitscanDict, "fx_impact", tr.c.materialType), collisionPoint, tr.c.normal.ToMat3(), false, vec3_origin, false, false, EC_IMPACT, hitscanTint);
+						}
+					}
+				}
 				continue;
-			} else if ((tr.c.material->GetSurfaceFlags() & SURF_BOUNCE) && !hitscanDict.GetBool("noBounce")) {
-				reflect++;
-			}
+			} */
 			// If the hit entity is bound to an actor use the actor instead
 			if ( ent->fl.takedamage && ent->GetTeamMaster( ) && ent->GetTeamMaster( )->IsType ( idActor::GetClassType() ) ) {
 				actualHitEnt = ent;
@@ -7956,7 +7975,7 @@ idEntity* idGameLocal::HitScan(
 			
 
 		//railgun path
-		if (hitscanDict.GetString("classname") == name) {
+		/*if (hitscanDict.GetString("classname") == name) {
 			gameLocal.Printf("Executed Path\n");
 			fxDir = collisionPoint - fxOrigin;
 			fxDir.Normalize();
@@ -7969,7 +7988,7 @@ idEntity* idGameLocal::HitScan(
 				tracer = false;
 			}
 		}
-		else {
+		else {*/
 			// Path effect 
 			fxDir = collisionPoint - fxOrigin;
 			fxDir.Normalize();
@@ -7981,7 +8000,8 @@ idEntity* idGameLocal::HitScan(
 			else {
 				tracer = false;
 			}
-		}
+			//limit = 0;
+		//}
 		if ( !reflect ) {
 			//on initial trace only
 			if ( hitscanDict.GetBool( "doWhizz" ) ) {

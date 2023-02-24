@@ -294,7 +294,6 @@ void rvWeaponLightningGun::Think ( void ) {
 	} else {
 		GetGlobalJointTransform( true, barrelJointView, origin, axis );
 	}
-
 	// Cache the target we are hitting
 	currentPath.origin = tr.endpos;
 	currentPath.normal = tr.c.normal;
@@ -312,7 +311,7 @@ void rvWeaponLightningGun::Think ( void ) {
 		float  power = 1.0f;
 		idVec3 dir;
 		
-		owner->inventory.UseAmmo( ammoType, ammoRequired );
+		owner->inventory.UseAmmo( ammoType, ammoRequired * 10 );
 		
 		dir = tr.endpos - origin;
 		dir.Normalize ( );
@@ -342,7 +341,6 @@ void rvWeaponLightningGun::Attack ( idEntity* ent, const idVec3& dir, float powe
 	if ( !ent || !ent->fl.takedamage ) {
 		return;
 	}
-
 	// Start a lightning crawl effect every so often
 	// we don't synchronize it, so let's not show it in multiplayer for a listen host. also fixes seeing it on the host from other instances
 	if ( !gameLocal.isMultiplayer && gameLocal.time > nextCrawlTime ) {

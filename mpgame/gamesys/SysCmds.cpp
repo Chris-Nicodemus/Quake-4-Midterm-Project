@@ -3053,7 +3053,6 @@ void Cmd_ListMaps_f( const idCmdArgs& args ) {
 }
 
 void Cmd_NextWeapon_f(const idCmdArgs& args) {
-	printf("Got to the command /n");
 	idPlayer* player;
 	player = gameLocal.GetLocalPlayer();
 	if (!player) return;
@@ -3061,7 +3060,6 @@ void Cmd_NextWeapon_f(const idCmdArgs& args) {
 }
 
 void Cmd_PrevWeapon_f(const idCmdArgs& args) {
-	printf("Got to the command /n");
 	idPlayer* player;
 	player = gameLocal.GetLocalPlayer();
 	if (!player) return;
@@ -3069,11 +3067,35 @@ void Cmd_PrevWeapon_f(const idCmdArgs& args) {
 }
 
 void Cmd_ReloadWeapon_f(const idCmdArgs& args) {
-	printf("Got to the command /n");
 	idPlayer* player;
 	player = gameLocal.GetLocalPlayer();
 	if (!player) return;
 	player->Reload();
+}
+float chargeCooldown = 0;
+void Cmd_SorcererCharge_f(const idCmdArgs& args) {
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+	if (chargeCooldown == 0) {
+		gameLocal.Printf("Got to charge!\n");
+		player->inventory.UseAmmo(9, -50);
+		chargeCooldown = gameLocal.time + 10000.0;
+		player->mphud->SetStateString("main_notice_text", common->GetLocalizedString("#str_108027"));
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	else if (chargeCooldown < gameLocal.time) {
+		gameLocal.Printf("Got to charge!\n");
+		player->inventory.UseAmmo(9, -50);
+		chargeCooldown = gameLocal.time + 10000.0;
+		player->mphud->SetStateString("main_notice_text", common->GetLocalizedString("#str_108027"));
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	else {
+		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+
 }
 /*
 =================
@@ -3093,6 +3115,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand("nextWeapon", Cmd_NextWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand("prevWeapon", Cmd_PrevWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand("reload", Cmd_ReloadWeapon_f, CMD_FL_GAME, "Switch to next weapon");
+	cmdSystem->AddCommand("SorcererCharge", Cmd_SorcererCharge_f, CMD_FL_GAME, "Charge Lightning Gun");
 	cmdSystem->AddCommand( "game_memory",			idClass::DisplayInfo_f,		CMD_FL_GAME,				"displays game class info" );
 	cmdSystem->AddCommand( "listClasses",			idClass::ListClasses_f,		CMD_FL_GAME,				"lists game classes" );
 	cmdSystem->AddCommand( "listThreads",			idThread::ListThreads_f,	CMD_FL_GAME|CMD_FL_CHEAT,	"lists script threads" );
