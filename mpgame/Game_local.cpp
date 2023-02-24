@@ -3714,7 +3714,7 @@ TIME_THIS_SCOPE("idGameLocal::RunFrame - gameDebug.BeginFrame()");
 			if ( player ) {
 				origin = player->GetPhysics()->GetOrigin();
 			}
-
+			Printf("Time is:(%f)\n", time);
 			idBounds	viewTextBounds( origin );
 			viewTextBounds.ExpandSelf( 128.0f );
 

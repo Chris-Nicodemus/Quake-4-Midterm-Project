@@ -9662,17 +9662,6 @@ void idPlayer::Think( void ) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
-	/*extern float wraithDuration;
-	extern float wraithWalkCooldown;
-	extern bool wraithActive;
-	if (wraithDuration < gameLocal.time && wraithActive)
-	{
-		this->noclip = !this->noclip;
-		wraithActive = false;
-		wraithWalkCooldown = gameLocal.time + 15000.0;
-		this->mphud->SetStateString("main_notice_text", "WRAITH WALK ENDED");
-		this->mphud->HandleNamedEvent("main_notice");
-	}*/
 }
 
 /*

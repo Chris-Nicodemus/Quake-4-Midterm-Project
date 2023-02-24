@@ -2513,6 +2513,13 @@ void rvWeapon::Attack( bool altAttack, int num_attacks, float spread, float fuse
 		common->Warning( "NULL viewmodel %s\n", __FUNCTION__ );
 		return;
 	}
+
+	if(owner->noclip)
+	{
+		owner->mphud->SetStateString("main_notice_text", "CANNOT FIRE IN WRAITH WALK");
+		owner->mphud->HandleNamedEvent("main_notice");
+		return;
+	}
 	
 	if ( viewModel->IsHidden() ) {
 		return;

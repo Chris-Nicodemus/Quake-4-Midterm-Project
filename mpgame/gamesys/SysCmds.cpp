@@ -3097,8 +3097,6 @@ void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 	}
 }
 float wraithWalkCooldown = 0;
-float wraithDuration = 0;
-bool wraithActive = false;
 void Cmd_WraithWalk_f(const idCmdArgs& args) {
 	idPlayer* player;
 	player = gameLocal.GetLocalPlayer();
@@ -3106,30 +3104,23 @@ void Cmd_WraithWalk_f(const idCmdArgs& args) {
 	if (player->noclip) {
 		player->noclip = !player->noclip;
 		wraithWalkCooldown = gameLocal.time + 15000.0;
-		wraithDuration = gameLocal.time + 75000.0;
-		wraithActive = false;
 		player->mphud->SetStateString("main_notice_text", "WRAITH WALK ENDED");
 		player->mphud->HandleNamedEvent("main_notice");
 	} else if (wraithWalkCooldown == 0) {
 		player->noclip = !player->noclip;
 		wraithWalkCooldown = gameLocal.time + 15000.0;
-		wraithDuration = gameLocal.time + 75000.0;
-		wraithActive = true;
 		player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
 	else if (wraithWalkCooldown < gameLocal.time) {
 		player->noclip = !player->noclip;
 		wraithWalkCooldown = gameLocal.time + 15000.0;
-		wraithDuration = gameLocal.time + 75000.0;
-		wraithActive = true;
 		player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
 		player->mphud->HandleNamedEvent("main_notice");
 	} else {
 		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
-	
 }
 /*
 =================
