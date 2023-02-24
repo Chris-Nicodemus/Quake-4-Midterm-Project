@@ -312,7 +312,10 @@ void rvWeaponLightningGun::Think ( void ) {
 		idVec3 dir;
 		
 		owner->inventory.UseAmmo( ammoType, ammoRequired * 10 );
-		
+		if (TotalAmmoCount() < 10) {
+			gameLocal.GetLocalPlayer()->inventory.UseAmmo(GetAmmoType(), TotalAmmoCount());
+		}
+
 		dir = tr.endpos - origin;
 		dir.Normalize ( );
 		

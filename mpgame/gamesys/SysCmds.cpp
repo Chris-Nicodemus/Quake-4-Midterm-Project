@@ -2674,7 +2674,7 @@ static void Cmd_ShowViewNotes_f( const idCmdArgs &args ) {
 
 	if ( parser.ExpectTokenString( "view" ) && parser.Parse1DMatrix( 3, origin.ToFloatPtr() ) && 
 		parser.Parse1DMatrix( 9, axis.ToFloatPtr() ) && parser.ExpectTokenString( "comments" ) && parser.ReadToken( &token ) ) {
-		player->hud->SetStateString( "viewcomments", token );
+		player->hud->SetStateString("viewcomments", token);
 		player->hud->HandleNamedEvent( "showViewComments" );
 		player->Teleport( origin, axis.ToAngles(), NULL );
 	} else {
@@ -3072,6 +3072,7 @@ void Cmd_ReloadWeapon_f(const idCmdArgs& args) {
 	if (!player) return;
 	player->Reload();
 }
+
 float chargeCooldown = 0;
 void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 	idPlayer* player;
@@ -3122,6 +3123,84 @@ void Cmd_WraithWalk_f(const idCmdArgs& args) {
 		player->mphud->HandleNamedEvent("main_notice");
 	}
 }
+
+float assassinCooldown = 0;
+void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
+	idPlayer* player;
+	idVec3 origin, end;
+	idAngles angles;
+	trace_t results = {};
+	idEntity dest;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+	origin = player->GetPhysics()->GetOrigin();
+	angles = player->viewAngles;
+	end = angles.ToForward();
+	end *= 8000;
+	end += origin;
+	gameLocal.TracePoint(player, results, origin, end, player->GetPhysics()->GetClipMask(), player);
+	bool fract = results.fraction < 1;
+	if (assassinCooldown == 0 && fract) {
+		gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
+		player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
+		assassinCooldown = gameLocal.time + 20000.0;
+		player->UpdateVisuals();
+		gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
+		player->mphud->SetStateString("main_notice_text", "TELEPORTED");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	else if (assassinCooldown < gameLocal.time && fract) {
+		gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
+		player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
+		assassinCooldown = gameLocal.time + 20000.0;
+		player->UpdateVisuals();
+		gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
+		player->mphud->SetStateString("main_notice_text", "TELEPORTED");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	else if (assassinCooldown > gameLocal.time) {
+		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	else if (!fract) {
+		player->mphud->SetStateString("main_notice_text", "INVALID TELEPORT LOCATION");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+}
+
+	float vampireCooldown = 0;
+	float vampireDuration = 0;
+	bool vampire = false;
+	void Cmd_VampireMode_f(const idCmdArgs & args) {
+		idPlayer* player;
+		player = gameLocal.GetLocalPlayer();
+		if (!player) return;
+		if (vampire) {
+			vampire = false;
+			vampireCooldown = gameLocal.time + 25000.0;
+			player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		if (vampireCooldown == 0 && !vampire) {
+			vampire = true;
+			vampireDuration = gameLocal.time + 7500.0;
+			vampireCooldown = gameLocal.time + 32500.0;
+			player->mphud->SetStateString("main_notice_text", "BLOOD THIRST BEGUN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (vampireCooldown < gameLocal.time && !vampire) {
+			vampire = true; 
+			vampireDuration = gameLocal.time + 7500.0;
+			vampireCooldown = gameLocal.time + 32500.0;
+			player->mphud->SetStateString("main_notice_text", "BLOOD THIRST BEGUN");
+			player->mphud->HandleNamedEvent("main_notice");
+		} 
+		else if (vampireCooldown > gameLocal.time)
+		{
+			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+	}
 /*
 =================
 idGameLocal::InitConsoleCommands
@@ -3142,6 +3221,8 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand("reload", Cmd_ReloadWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand("SorcererCharge", Cmd_SorcererCharge_f, CMD_FL_GAME, "Charge Lightning Gun");
 	cmdSystem->AddCommand("WraithWalk", Cmd_WraithWalk_f, CMD_FL_GAME, "Activate Wraith Walk");
+	cmdSystem->AddCommand("AssassinTeleport", Cmd_AssassinTeleport_f, CMD_FL_GAME, "Teleport");
+	cmdSystem->AddCommand("VampireMode", Cmd_VampireMode_f, CMD_FL_GAME, "Turns on 25 percent lifesteal");
 	cmdSystem->AddCommand( "game_memory",			idClass::DisplayInfo_f,		CMD_FL_GAME,				"displays game class info" );
 	cmdSystem->AddCommand( "listClasses",			idClass::ListClasses_f,		CMD_FL_GAME,				"lists game classes" );
 	cmdSystem->AddCommand( "listThreads",			idThread::ListThreads_f,	CMD_FL_GAME|CMD_FL_CHEAT,	"lists script threads" );

@@ -7755,7 +7755,6 @@ idEntity* idGameLocal::HitScan(
 		
 		// Calculate the end point of the trace
 		start    = origin;
-		//changing hitscan so railgun punctures walls
 		//gameLocal.Printf("Weapon class is: (%s)\n", hitscanDict.GetString("classname"));
 		idStr name = "hitscan_railgun_mp";
 		if ( g_perfTest_hitscanShort.GetBool() /* && !(hitscanDict.GetString("classname") == name)*/) {
