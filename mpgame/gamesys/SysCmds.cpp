@@ -675,7 +675,7 @@ void Cmd_Noclip_f( const idCmdArgs &args ) {
 	idPlayer	*player;
 
 	player = gameLocal.GetLocalPlayer();
-	if ( !player || !gameLocal.CheatsOk() ) {
+	if ( !player /* || !gameLocal.CheatsOk()*/) {
 		return;
 	}
 
@@ -3095,7 +3095,41 @@ void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
-
+}
+float wraithWalkCooldown = 0;
+float wraithDuration = 0;
+bool wraithActive = false;
+void Cmd_WraithWalk_f(const idCmdArgs& args) {
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+	if (player->noclip) {
+		player->noclip = !player->noclip;
+		wraithWalkCooldown = gameLocal.time + 15000.0;
+		wraithDuration = gameLocal.time + 75000.0;
+		wraithActive = false;
+		player->mphud->SetStateString("main_notice_text", "WRAITH WALK ENDED");
+		player->mphud->HandleNamedEvent("main_notice");
+	} else if (wraithWalkCooldown == 0) {
+		player->noclip = !player->noclip;
+		wraithWalkCooldown = gameLocal.time + 15000.0;
+		wraithDuration = gameLocal.time + 75000.0;
+		wraithActive = true;
+		player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	else if (wraithWalkCooldown < gameLocal.time) {
+		player->noclip = !player->noclip;
+		wraithWalkCooldown = gameLocal.time + 15000.0;
+		wraithDuration = gameLocal.time + 75000.0;
+		wraithActive = true;
+		player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
+		player->mphud->HandleNamedEvent("main_notice");
+	} else {
+		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+	
 }
 /*
 =================
@@ -3116,6 +3150,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand("prevWeapon", Cmd_PrevWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand("reload", Cmd_ReloadWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand("SorcererCharge", Cmd_SorcererCharge_f, CMD_FL_GAME, "Charge Lightning Gun");
+	cmdSystem->AddCommand("WraithWalk", Cmd_WraithWalk_f, CMD_FL_GAME, "Activate Wraith Walk");
 	cmdSystem->AddCommand( "game_memory",			idClass::DisplayInfo_f,		CMD_FL_GAME,				"displays game class info" );
 	cmdSystem->AddCommand( "listClasses",			idClass::ListClasses_f,		CMD_FL_GAME,				"lists game classes" );
 	cmdSystem->AddCommand( "listThreads",			idThread::ListThreads_f,	CMD_FL_GAME|CMD_FL_CHEAT,	"lists script threads" );
@@ -3134,7 +3169,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand( "god",					Cmd_God_f,					CMD_FL_GAME|CMD_FL_CHEAT,	"enables god mode" );
 	cmdSystem->AddCommand( "undying",				Cmd_Undying_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"enables undying mode (take damage down to 1 health, but do not die)" );
 	cmdSystem->AddCommand( "notarget",				Cmd_Notarget_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"disables the player as a target" );
-	cmdSystem->AddCommand( "noclip",				Cmd_Noclip_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"disables collision detection for the player" );
+	cmdSystem->AddCommand( "noclip",				Cmd_Noclip_f,				CMD_FL_GAME/* | CMD_FL_CHEAT*/, "disables collision detection for the player");
 	cmdSystem->AddCommand( "kill",					Cmd_Kill_f,					CMD_FL_GAME,				"kills the player" );
 	cmdSystem->AddCommand( "where",					Cmd_GetViewpos_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"prints the current view position" );
 	cmdSystem->AddCommand( "getviewpos",			Cmd_GetViewpos_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"prints the current view position" );

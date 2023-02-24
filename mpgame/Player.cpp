@@ -9330,7 +9330,6 @@ void idPlayer::Think( void ) {
 		g_crosshairColor.ClearModified();
 	}
 #endif
-
  	// Dont do any thinking if we are in modview
 	if ( gameLocal.editors & EDITOR_MODVIEW || gameEdit->PlayPlayback() ) {
 		// calculate the exact bobbed view position, which is used to
@@ -9663,6 +9662,17 @@ void idPlayer::Think( void ) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
+	/*extern float wraithDuration;
+	extern float wraithWalkCooldown;
+	extern bool wraithActive;
+	if (wraithDuration < gameLocal.time && wraithActive)
+	{
+		this->noclip = !this->noclip;
+		wraithActive = false;
+		wraithWalkCooldown = gameLocal.time + 15000.0;
+		this->mphud->SetStateString("main_notice_text", "WRAITH WALK ENDED");
+		this->mphud->HandleNamedEvent("main_notice");
+	}*/
 }
 
 /*
