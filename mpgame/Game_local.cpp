@@ -5952,7 +5952,7 @@ void idGameLocal::RadiusDamage( const idVec3 &origin, idEntity *inflictor, idEnt
 
 			dir.Normalize();
 			ent->Damage( inflictor, attacker, dir, damageDefName, damageScale, CLIPMODEL_ID_TO_JOINT_HANDLE(ent->GetPhysics()->GetClipModel()->GetId()) );
-			if (gameLocal.time > vampireDuration) {
+			if (gameLocal.time > vampireDuration && vampire) {
 				vampire = false;
 				idPlayer* player;
 				player = gameLocal.GetLocalPlayer();
@@ -7980,7 +7980,7 @@ idEntity* idGameLocal::HitScan(
 						}
 					if ( !g_perfTest_weaponNoFX.GetBool() ) {
 						ent->AddDamageEffect( tr, dir, hitscanDict.GetString ( "def_damage" ), owner );
-						if (gameLocal.time > vampireDuration) {
+						if (gameLocal.time > vampireDuration && vampire) {
 							vampire = false;
 							idPlayer* player;
 							player = gameLocal.GetLocalPlayer();

@@ -872,7 +872,7 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity, bo
 					idVec3 dir = velocity;
 					dir.Normalize();
 					actualHitEnt->Damage( this, owner, dir, damageDefName, damagePower, CLIPMODEL_ID_TO_JOINT_HANDLE( collision.c.id ) );
-					if (gameLocal.time > vampireDuration) {
+					if (gameLocal.time > vampireDuration && vampire) {
 						vampire = false;
 						idPlayer* player;
 						player = gameLocal.GetLocalPlayer();
@@ -947,7 +947,7 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity, bo
 			}	
 // RAVEN END
  			ent->Damage( this, owner, dir, damageDefName, damagePower, hitJoint );
-			if (gameLocal.time > vampireDuration) {
+			if (gameLocal.time > vampireDuration && vampire) {
 				vampire = false;
 				idPlayer* player;
 				player = gameLocal.GetLocalPlayer();
