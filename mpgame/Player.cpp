@@ -9322,8 +9322,8 @@ void idPlayer::Think( void ) {
 	if (barbarian && barbarianDuration < gameLocal.time)
 	{
 		barbarian = false;
-		godmode = false;
-		mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE ENDED");
+		undying = false;
+		mphud->SetStateString("main_notice_text", "UNDYING RAGE ENDED");
 		mphud->HandleNamedEvent("main_notice");
 	}
 	if ( !gameLocal.usercmds ) {

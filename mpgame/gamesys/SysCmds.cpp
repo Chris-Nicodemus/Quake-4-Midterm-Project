@@ -547,7 +547,7 @@ void Cmd_Give_f( const idCmdArgs &args ) {
 	idPlayer	*player;
 
 	player = gameLocal.GetLocalPlayer();
-	if ( !player || !gameLocal.CheatsOk() ) {
+	if ( !player /* || !gameLocal.CheatsOk()*/) {
 		return;
 	}
 
@@ -1130,7 +1130,7 @@ void Cmd_Spawn_f( const idCmdArgs &args ) {
 	idDict		dict;
 
 	player = gameLocal.GetLocalPlayer();
-	if ( !player || !gameLocal.CheatsOk( false ) ) {
+	if ( !player /* || !gameLocal.CheatsOk(false)*/) {
 		return;
 	}
 
@@ -1274,7 +1274,7 @@ Removes the specified entity
 ==================
 */
 void Cmd_Remove_f( const idCmdArgs &args ) {
-	if ( !gameLocal.GetLocalPlayer() || !gameLocal.CheatsOk( false ) ) {
+	if ( !gameLocal.GetLocalPlayer() /* || !gameLocal.CheatsOk(false)*/) {
 		return;
 	}
 	if ( args.Argc() != 2 ) {
@@ -3211,25 +3211,25 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 		if (!player) return;
 		if (barbarian) {
 			barbarian = false;
-			player->godmode = false;
+			player->undying = false;
 			barbarianCooldown = gameLocal.time + 30000.0;
-			player->mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE ENDED");
+			player->mphud->SetStateString("main_notice_text", "UNDYING RAGE ENDED");
 			player->mphud->HandleNamedEvent("main_notice");
 		}
 		if (barbarianCooldown == 0 && !barbarian) {
 			barbarian = true;
-			player->godmode = true;
-			barbarianDuration = gameLocal.time + 3500.0;
-			barbarianCooldown = gameLocal.time + 33500.0;
-			player->mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE BEGUN");
+			player->undying = true;
+			barbarianDuration = gameLocal.time + 5500.0;
+			barbarianCooldown = gameLocal.time + 35500.0;
+			player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
 			player->mphud->HandleNamedEvent("main_notice");
 		}
 		else if (barbarianCooldown < gameLocal.time && !barbarian) {
 			barbarian = true;
-			player->godmode = true;
-			barbarianDuration = gameLocal.time + 3500.0;
-			barbarianCooldown = gameLocal.time + 33500.0;
-			player->mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE BEGUN");
+			player->undying = true;
+			barbarianDuration = gameLocal.time + 5500.0;
+			barbarianCooldown = gameLocal.time + 35500.0;
+			player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
 			player->mphud->HandleNamedEvent("main_notice");
 		}
 		else if (barbarianCooldown > gameLocal.time)
@@ -3274,7 +3274,7 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand( "sayTeam",				Cmd_SayTeam_f,				CMD_FL_GAME,				"team text chat" );
 	cmdSystem->AddCommand( "addChatLine",			Cmd_AddChatLine_f,			CMD_FL_GAME,				"internal use - core to game chat lines" );
 	cmdSystem->AddCommand( "gameKick",				Cmd_Kick_f,					CMD_FL_GAME,				"same as kick, but recognizes player names" );
-	cmdSystem->AddCommand( "give",					Cmd_Give_f,					CMD_FL_GAME|CMD_FL_CHEAT,	"gives one or more items" );
+	cmdSystem->AddCommand( "give",					Cmd_Give_f,					CMD_FL_GAME,				"gives one or more items" );
 	cmdSystem->AddCommand( "centerview",			Cmd_CenterView_f,			CMD_FL_GAME,				"centers the view" );
 	cmdSystem->AddCommand( "god",					Cmd_God_f,					CMD_FL_GAME|CMD_FL_CHEAT,	"enables god mode" );
 	cmdSystem->AddCommand( "undying",				Cmd_Undying_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"enables undying mode (take damage down to 1 health, but do not die)" );
@@ -3286,9 +3286,9 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand( "setviewpos",			Cmd_SetViewpos_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"sets the current view position" );
 	cmdSystem->AddCommand( "teleport",				Cmd_Teleport_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"teleports the player to an entity location", idGameLocal::ArgCompletion_EntityName );
 	cmdSystem->AddCommand( "trigger",				Cmd_Trigger_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"triggers an entity", idGameLocal::ArgCompletion_EntityName );
-	cmdSystem->AddCommand( "spawn",					Cmd_Spawn_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"spawns a game entity", idCmdSystem::ArgCompletion_Decl<DECL_ENTITYDEF> );
+	cmdSystem->AddCommand( "spawn",					Cmd_Spawn_f,				CMD_FL_GAME,				"spawns a game entity", idCmdSystem::ArgCompletion_Decl<DECL_ENTITYDEF> );
 	cmdSystem->AddCommand( "damage",				Cmd_Damage_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"apply damage to an entity", idGameLocal::ArgCompletion_EntityName );
-	cmdSystem->AddCommand( "remove",				Cmd_Remove_f,				CMD_FL_GAME|CMD_FL_CHEAT,	"removes an entity", idGameLocal::ArgCompletion_EntityName );
+	cmdSystem->AddCommand( "remove",				Cmd_Remove_f,				CMD_FL_GAME,				"removes an entity", idGameLocal::ArgCompletion_EntityName );
 	cmdSystem->AddCommand( "killMonsters",			Cmd_KillMonsters_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"removes all monsters" );
 	cmdSystem->AddCommand( "killMoveables",			Cmd_KillMovables_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"removes all moveables" );
 	cmdSystem->AddCommand( "killRagdolls",			Cmd_KillRagdolls_f,			CMD_FL_GAME|CMD_FL_CHEAT,	"removes all ragdolls" );
