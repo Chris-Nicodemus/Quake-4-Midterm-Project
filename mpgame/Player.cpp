@@ -9300,6 +9300,8 @@ idPlayer::Think
 Called every tic for each player
 ==============
 */
+extern bool barbarian;
+extern float barbarianDuration;
 void idPlayer::Think( void ) {
 	renderEntity_t *headRenderEnt;
 
@@ -9317,7 +9319,13 @@ void idPlayer::Think( void ) {
 			}
 		}
 	}
-
+	if (barbarian && barbarianDuration < gameLocal.time)
+	{
+		barbarian = false;
+		godmode = false;
+		mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE ENDED");
+		mphud->HandleNamedEvent("main_notice");
+	}
 	if ( !gameLocal.usercmds ) {
 		return;
 	}

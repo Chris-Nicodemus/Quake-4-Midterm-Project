@@ -3201,6 +3201,43 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 			player->mphud->HandleNamedEvent("main_notice");
 		}
 	}
+
+	bool barbarian = false;
+	float barbarianCooldown = 0;
+	float barbarianDuration = 0;
+	void Cmd_BarbarianRage_f(const idCmdArgs& args) {
+		idPlayer* player;
+		player = gameLocal.GetLocalPlayer();
+		if (!player) return;
+		if (barbarian) {
+			barbarian = false;
+			player->godmode = false;
+			barbarianCooldown = gameLocal.time + 30000.0;
+			player->mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE ENDED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		if (barbarianCooldown == 0 && !barbarian) {
+			barbarian = true;
+			player->godmode = true;
+			barbarianDuration = gameLocal.time + 3500.0;
+			barbarianCooldown = gameLocal.time + 33500.0;
+			player->mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE BEGUN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (barbarianCooldown < gameLocal.time && !barbarian) {
+			barbarian = true;
+			player->godmode = true;
+			barbarianDuration = gameLocal.time + 3500.0;
+			barbarianCooldown = gameLocal.time + 33500.0;
+			player->mphud->SetStateString("main_notice_text", "INVINCIBLE RAGE BEGUN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (barbarianCooldown > gameLocal.time)
+		{
+			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+	}
 /*
 =================
 idGameLocal::InitConsoleCommands
@@ -3221,8 +3258,9 @@ void idGameLocal::InitConsoleCommands( void ) {
 	cmdSystem->AddCommand("reload", Cmd_ReloadWeapon_f, CMD_FL_GAME, "Switch to next weapon");
 	cmdSystem->AddCommand("SorcererCharge", Cmd_SorcererCharge_f, CMD_FL_GAME, "Charge Lightning Gun");
 	cmdSystem->AddCommand("WraithWalk", Cmd_WraithWalk_f, CMD_FL_GAME, "Activate Wraith Walk");
-	cmdSystem->AddCommand("AssassinTeleport", Cmd_AssassinTeleport_f, CMD_FL_GAME, "Teleport");
-	cmdSystem->AddCommand("VampireMode", Cmd_VampireMode_f, CMD_FL_GAME, "Turns on 25 percent lifesteal");
+	cmdSystem->AddCommand("AssassinTeleport", Cmd_AssassinTeleport_f, CMD_FL_GAME, "Teleport where you are looking");
+	cmdSystem->AddCommand("VampireMode", Cmd_VampireMode_f, CMD_FL_GAME, "Turns on lifesteal");
+	cmdSystem->AddCommand("BarbarianRage", Cmd_BarbarianRage_f, CMD_FL_GAME, "Turns on invincibility for a short period");
 	cmdSystem->AddCommand( "game_memory",			idClass::DisplayInfo_f,		CMD_FL_GAME,				"displays game class info" );
 	cmdSystem->AddCommand( "listClasses",			idClass::ListClasses_f,		CMD_FL_GAME,				"lists game classes" );
 	cmdSystem->AddCommand( "listThreads",			idThread::ListThreads_f,	CMD_FL_GAME|CMD_FL_CHEAT,	"lists script threads" );
