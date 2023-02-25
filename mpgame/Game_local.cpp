@@ -5832,6 +5832,8 @@ Returns the number of actors damaged
 ============
 */
 // abahr: changed to work with deathPush
+extern bool vampire;
+extern float vampireDuration;
 void idGameLocal::RadiusDamage( const idVec3 &origin, idEntity *inflictor, idEntity *attacker, idEntity *ignoreDamage, idEntity *ignorePush, const char *damageDefName, float dmgPower, int* hitCount ) {
 	float		dist, damageScale, attackerDamageScale, attackerPushScale;
 	idEntity*	ent = NULL;
@@ -5950,6 +5952,25 @@ void idGameLocal::RadiusDamage( const idVec3 &origin, idEntity *inflictor, idEnt
 
 			dir.Normalize();
 			ent->Damage( inflictor, attacker, dir, damageDefName, damageScale, CLIPMODEL_ID_TO_JOINT_HANDLE(ent->GetPhysics()->GetClipModel()->GetId()) );
+			if (gameLocal.time > vampireDuration) {
+				vampire = false;
+				idPlayer* player;
+				player = gameLocal.GetLocalPlayer();
+				player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			else if (vampire) {
+				float healFactor = damageScale;
+				healFactor *= 2.5;
+				idPlayer* player;
+				player = gameLocal.GetLocalPlayer();
+				gameLocal.Printf("Healed for:(%f)\n", healFactor);
+				player->health = player->health + healFactor;
+				if (player->health > 100)
+				{
+					player->health = 100;
+				}
+			}
 
 			// for stats, count the first 
 			if( attacker && attacker->IsType( idPlayer::GetClassType() ) && inflictor && inflictor->IsType( idProjectile::GetClassType() ) && ent->IsType( idPlayer::GetClassType() ) && hitCount ) {
@@ -7690,6 +7711,8 @@ idGameLocal::HitScan
 Run a hitscan trace from the given origin and direction
 ================
 */
+extern bool vampire;
+extern float vampireDuration;
 idEntity* idGameLocal::HitScan( 
 	const idDict&	hitscanDict, 
 	const idVec3&	origOrigin, 
@@ -7957,6 +7980,23 @@ idEntity* idGameLocal::HitScan(
 						}
 					if ( !g_perfTest_weaponNoFX.GetBool() ) {
 						ent->AddDamageEffect( tr, dir, hitscanDict.GetString ( "def_damage" ), owner );
+						if (gameLocal.time > vampireDuration) {
+							vampire = false;
+							idPlayer* player;
+							player = gameLocal.GetLocalPlayer();
+							player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
+							player->mphud->HandleNamedEvent("main_notice");
+						}
+						else if (vampire) {
+							float healFactor = hitscanDict.GetInt("damage");
+							healFactor *= 0.25;
+							gameLocal.Printf("Healed for:(%d)\n", healFactor);
+							owner->health = owner->health + healFactor;
+							if (owner->health > 100)
+							{
+								owner->health = 100;
+							}
+						}
 					}
 				}
 			}

@@ -22,6 +22,9 @@
 static const float BOUNCE_SOUND_MIN_VELOCITY	= 200.0f;
 static const float BOUNCE_SOUND_MAX_VELOCITY	= 400.0f;
 
+extern bool vampire;
+extern float vampireDuration;
+
 const idEventDef EV_Explode( "<explode>", NULL );
 const idEventDef EV_Fizzle( "<fizzle>", NULL );
 const idEventDef EV_RadiusDamage( "<radiusdmg>", "E" );
@@ -869,6 +872,23 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity, bo
 					idVec3 dir = velocity;
 					dir.Normalize();
 					actualHitEnt->Damage( this, owner, dir, damageDefName, damagePower, CLIPMODEL_ID_TO_JOINT_HANDLE( collision.c.id ) );
+					if (gameLocal.time > vampireDuration) {
+						vampire = false;
+						idPlayer* player;
+						player = gameLocal.GetLocalPlayer();
+						player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
+						player->mphud->HandleNamedEvent("main_notice");
+					}
+					else if (vampire) {
+						float healFactor = damagePower;
+						healFactor *= 25.0;
+						gameLocal.Printf("Healed for:(%f)\n", healFactor);
+						owner->health = owner->health + healFactor;
+						if (owner->health > 100)
+						{
+							owner->health = 100;
+						}
+					}
 				}
 			}
 			return false;		
@@ -927,7 +947,23 @@ bool idProjectile::Collide( const trace_t &collision, const idVec3 &velocity, bo
 			}	
 // RAVEN END
  			ent->Damage( this, owner, dir, damageDefName, damagePower, hitJoint );
-			
+			if (gameLocal.time > vampireDuration) {
+				vampire = false;
+				idPlayer* player;
+				player = gameLocal.GetLocalPlayer();
+				player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			else if (vampire) {
+				float healFactor = damagePower;
+				healFactor *= 25.0;
+				gameLocal.Printf("Healed for:(%f)\n", healFactor);
+				owner->health = owner->health + healFactor;
+				if (owner->health > 100)
+				{
+					owner->health = 100;
+				}
+			}
 			if( owner && owner->IsType( idPlayer::GetClassType() ) && ent->IsType( idActor::GetClassType() ) ) {
 				statManager->WeaponHit( (const idActor*)(owner.GetEntity()), ent, methodOfDeath, hitCount == 0 );			
 				hitCount++;
