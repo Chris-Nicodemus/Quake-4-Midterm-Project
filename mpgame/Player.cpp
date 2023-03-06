@@ -9294,7 +9294,12 @@ void idPlayer::LoadDeferredModel( void ) {
 		}
 	}
 }
-
+extern bool loadoutSelected;
+extern bool sorcererSelected;
+extern bool wraithSelected;
+extern bool assassinSelected;
+extern bool vampireSelected;
+extern bool barbarianSelected;
 /*
 ==============
 idPlayer::Think
@@ -9612,6 +9617,15 @@ void idPlayer::Think( void ) {
  		}
 	}
  
+	if (health <= 0)
+	{
+		loadoutSelected = false;
+		sorcererSelected = false;
+		wraithSelected = false;
+		assassinSelected = false;
+		vampireSelected = false;
+		barbarianSelected = false;
+	}
  	if ( headRenderEnt ) {
 		if ( powerUpSkin ) {
 			headRenderEnt->customSkin = powerUpSkin;
@@ -12379,6 +12393,7 @@ void idPlayer::WriteToSnapshot( idBitMsgDelta &msg ) const {
 idPlayer::ReadFromSnapshot
 ================
 */
+
 void idPlayer::ReadFromSnapshot( const idBitMsgDelta &msg ) {
 	assert( !IsFakeClient() );
 
