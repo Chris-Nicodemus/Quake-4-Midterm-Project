@@ -3074,57 +3074,110 @@ void Cmd_ReloadWeapon_f(const idCmdArgs& args) {
 }
 
 float chargeCooldown = 0;
+idStr Gauntlet = "weapon_gauntlet";
+idStr LightningGun = "weapon_lightninggun";
+bool loadoutSelected = false;
+bool sorcererSelected = false;
 void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 	idPlayer* player;
 	player = gameLocal.GetLocalPlayer();
 	if (!player) return;
-	if (chargeCooldown == 0) {
-		gameLocal.Printf("Got to charge!\n");
-		player->inventory.UseAmmo(9, -50);
-		chargeCooldown = gameLocal.time + 10000.0;
-		player->mphud->SetStateString("main_notice_text", common->GetLocalizedString("#str_108027"));
+
+	if (!loadoutSelected)
+	{
+		//player->inventory.Drop(player->spawnArgs, Gauntlet, 0);
+		player->RemoveInventoryItem(Gauntlet);
+		player->GiveItem(LightningGun);
+		sorcererSelected = true;
+		loadoutSelected = true;
+		player->mphud->SetStateString("main_notice_text", "SORCERER CLASS SELECTED");
 		player->mphud->HandleNamedEvent("main_notice");
+		return;
 	}
-	else if (chargeCooldown < gameLocal.time) {
-		gameLocal.Printf("Got to charge!\n");
-		player->inventory.UseAmmo(9, -50);
-		chargeCooldown = gameLocal.time + 10000.0;
-		player->mphud->SetStateString("main_notice_text", common->GetLocalizedString("#str_108027"));
-		player->mphud->HandleNamedEvent("main_notice");
+	if (loadoutSelected && sorcererSelected)
+	{
+		if (chargeCooldown == 0) {
+			gameLocal.Printf("Got to charge!\n");
+			player->inventory.UseAmmo(9, -50);
+			chargeCooldown = gameLocal.time + 10000.0;
+
+			player->mphud->SetStateString("main_notice_text", common->GetLocalizedString("#str_108027"));
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (chargeCooldown < gameLocal.time) {
+			gameLocal.Printf("Got to charge!\n");
+			player->inventory.UseAmmo(9, -50);
+			chargeCooldown = gameLocal.time + 10000.0;
+			player->mphud->SetStateString("main_notice_text", common->GetLocalizedString("#str_108027"));
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else {
+			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
 	}
-	else {
-		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
-		player->mphud->HandleNamedEvent("main_notice");
-	}
-}
-float wraithWalkCooldown = 0;
-void Cmd_WraithWalk_f(const idCmdArgs& args) {
-	idPlayer* player;
-	player = gameLocal.GetLocalPlayer();
-	if (!player) return;
-	if (player->noclip) {
-		player->noclip = !player->noclip;
-		wraithWalkCooldown = gameLocal.time + 15000.0;
-		player->mphud->SetStateString("main_notice_text", "WRAITH WALK ENDED");
-		player->mphud->HandleNamedEvent("main_notice");
-	} else if (wraithWalkCooldown == 0) {
-		player->noclip = !player->noclip;
-		wraithWalkCooldown = gameLocal.time + 15000.0;
-		player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
-		player->mphud->HandleNamedEvent("main_notice");
-	}
-	else if (wraithWalkCooldown < gameLocal.time) {
-		player->noclip = !player->noclip;
-		wraithWalkCooldown = gameLocal.time + 15000.0;
-		player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
-		player->mphud->HandleNamedEvent("main_notice");
-	} else {
-		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+	else
+	{
+		player->mphud->SetStateString("main_notice_text", "SKILL NOT AVAILABLE FOR CLASS");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
 }
 
+idStr shotgun = "weapon_shotgun";
+idStr machinegun = "weapon_machinegun";
+idStr machinegunAmmo = "ammo_machinegun";
+float wraithWalkCooldown = 0;
+bool wraithSelected = false;
+void Cmd_WraithWalk_f(const idCmdArgs& args) {
+	idPlayer* player;
+	player = gameLocal.GetLocalPlayer();
+	if (!player) return;
+
+	if (!loadoutSelected)
+	{
+		player->inventory.UseAmmo(2, 20);
+		player->GiveItem(shotgun);
+		wraithSelected = true;
+		loadoutSelected = true;
+		player->mphud->SetStateString("main_notice_text", "WRAITH CLASS SELECTED");
+		player->mphud->HandleNamedEvent("main_notice");
+		return;
+	}
+	if (loadoutSelected && wraithSelected)
+	{
+		if (player->noclip) {
+			player->noclip = !player->noclip;
+			wraithWalkCooldown = gameLocal.time + 15000.0;
+			player->mphud->SetStateString("main_notice_text", "WRAITH WALK ENDED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (wraithWalkCooldown == 0) {
+			player->noclip = !player->noclip;
+			wraithWalkCooldown = gameLocal.time + 15000.0;
+			player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (wraithWalkCooldown < gameLocal.time) {
+			player->noclip = !player->noclip;
+			wraithWalkCooldown = gameLocal.time + 15000.0;
+			player->mphud->SetStateString("main_notice_text", "WRAITH WALK STARTED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else {
+			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+	}
+	else
+	{
+		player->mphud->SetStateString("main_notice_text", "SKILL NOT AVAILABLE FOR CLASS");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+}
+
+idStr nailgun = "weapon_nailgun";
 float assassinCooldown = 0;
+bool assassinSelected = false;
 void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 	idPlayer* player;
 	idVec3 origin, end;
@@ -3133,108 +3186,170 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 	idEntity dest;
 	player = gameLocal.GetLocalPlayer();
 	if (!player) return;
-	origin = player->GetPhysics()->GetOrigin();
-	angles = player->viewAngles;
-	end = angles.ToForward();
-	end *= 8000;
-	end += origin;
-	gameLocal.TracePoint(player, results, origin, end, player->GetPhysics()->GetClipMask(), player);
-	bool fract = results.fraction < 1;
-	if (assassinCooldown == 0 && fract) {
-		gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
-		player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
-		assassinCooldown = gameLocal.time + 20000.0;
-		player->UpdateVisuals();
-		gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
-		player->mphud->SetStateString("main_notice_text", "TELEPORTED");
+
+	if (!loadoutSelected)
+	{
+		player->inventory.UseAmmo(2, 20);
+		player->GiveItem(nailgun);
+		assassinSelected = true;
+		loadoutSelected = true;
+		player->mphud->SetStateString("main_notice_text", "ASSASSIN CLASS SELECTED");
 		player->mphud->HandleNamedEvent("main_notice");
+		return;
 	}
-	else if (assassinCooldown < gameLocal.time && fract) {
-		gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
-		player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
-		assassinCooldown = gameLocal.time + 20000.0;
-		player->UpdateVisuals();
-		gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
-		player->mphud->SetStateString("main_notice_text", "TELEPORTED");
-		player->mphud->HandleNamedEvent("main_notice");
+	if (loadoutSelected && assassinSelected)
+	{
+		origin = player->GetPhysics()->GetOrigin();
+		angles = player->viewAngles;
+		end = angles.ToForward();
+		end *= 8000;
+		end += origin;
+		gameLocal.TracePoint(player, results, origin, end, player->GetPhysics()->GetClipMask(), player);
+		bool fract = results.fraction < 1;
+		if (assassinCooldown == 0 && fract) {
+			gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
+			player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
+			assassinCooldown = gameLocal.time + 20000.0;
+			player->UpdateVisuals();
+			gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
+			player->mphud->SetStateString("main_notice_text", "TELEPORTED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (assassinCooldown < gameLocal.time && fract) {
+			gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
+			player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
+			assassinCooldown = gameLocal.time + 20000.0;
+			player->UpdateVisuals();
+			gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
+			player->mphud->SetStateString("main_notice_text", "TELEPORTED");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (assassinCooldown > gameLocal.time) {
+			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else if (!fract) {
+			player->mphud->SetStateString("main_notice_text", "INVALID TELEPORT LOCATION");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
 	}
-	else if (assassinCooldown > gameLocal.time) {
-		player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
-		player->mphud->HandleNamedEvent("main_notice");
-	}
-	else if (!fract) {
-		player->mphud->SetStateString("main_notice_text", "INVALID TELEPORT LOCATION");
+	else
+	{
+		player->mphud->SetStateString("main_notice_text", "SKILL NOT AVAILABLE FOR CLASS");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
 }
 
+	idStr railgun = "weapon_railgun";
 	float vampireCooldown = 0;
 	float vampireDuration = 0;
 	bool vampire = false;
+	bool vampireSelected = false;
 	void Cmd_VampireMode_f(const idCmdArgs & args) {
 		idPlayer* player;
 		player = gameLocal.GetLocalPlayer();
 		if (!player) return;
-		if (vampire) {
-			vampire = false;
-			vampireCooldown = gameLocal.time + 25000.0;
-			player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
-			player->mphud->HandleNamedEvent("main_notice");
-		}
-		if (vampireCooldown == 0 && !vampire) {
-			vampire = true;
-			vampireDuration = gameLocal.time + 7500.0;
-			vampireCooldown = gameLocal.time + 32500.0;
-			player->mphud->SetStateString("main_notice_text", "BLOOD THIRST BEGUN");
-			player->mphud->HandleNamedEvent("main_notice");
-		}
-		else if (vampireCooldown < gameLocal.time && !vampire) {
-			vampire = true; 
-			vampireDuration = gameLocal.time + 7500.0;
-			vampireCooldown = gameLocal.time + 32500.0;
-			player->mphud->SetStateString("main_notice_text", "BLOOD THIRST BEGUN");
-			player->mphud->HandleNamedEvent("main_notice");
-		} 
-		else if (vampireCooldown > gameLocal.time)
+
+		if (!loadoutSelected)
 		{
-			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->inventory.UseAmmo(2, 20);
+			player->GiveItem(railgun);
+			vampireSelected = true;
+			loadoutSelected = true;
+			player->mphud->SetStateString("main_notice_text", "VAMPIRE CLASS SELECTED");
+			player->mphud->HandleNamedEvent("main_notice");
+			return;
+		}
+		if (loadoutSelected && vampireSelected)
+		{
+			if (vampire) {
+				vampire = false;
+				vampireCooldown = gameLocal.time + 25000.0;
+				player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			if (vampireCooldown == 0 && !vampire) {
+				vampire = true;
+				vampireDuration = gameLocal.time + 7500.0;
+				vampireCooldown = gameLocal.time + 32500.0;
+				player->mphud->SetStateString("main_notice_text", "BLOOD THIRST BEGUN");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			else if (vampireCooldown < gameLocal.time && !vampire) {
+				vampire = true;
+				vampireDuration = gameLocal.time + 7500.0;
+				vampireCooldown = gameLocal.time + 32500.0;
+				player->mphud->SetStateString("main_notice_text", "BLOOD THIRST BEGUN");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			else if (vampireCooldown > gameLocal.time)
+			{
+				player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+		}
+		else
+		{
+			player->mphud->SetStateString("main_notice_text", "SKILL NOT AVAILABLE FOR CLASS");
 			player->mphud->HandleNamedEvent("main_notice");
 		}
 	}
 
 	bool barbarian = false;
+	bool barbarianSelected = false;
 	float barbarianCooldown = 0;
 	float barbarianDuration = 0;
+	idStr hyperblaster = "weapon_hyperblaster";
+	//player->spawnArgs, machinegun, 0
 	void Cmd_BarbarianRage_f(const idCmdArgs& args) {
 		idPlayer* player;
 		player = gameLocal.GetLocalPlayer();
 		if (!player) return;
-		if (barbarian) {
-			barbarian = false;
-			player->undying = false;
-			barbarianCooldown = gameLocal.time + 30000.0;
-			player->mphud->SetStateString("main_notice_text", "UNDYING RAGE ENDED");
-			player->mphud->HandleNamedEvent("main_notice");
-		}
-		if (barbarianCooldown == 0 && !barbarian) {
-			barbarian = true;
-			player->undying = true;
-			barbarianDuration = gameLocal.time + 5500.0;
-			barbarianCooldown = gameLocal.time + 35500.0;
-			player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
-			player->mphud->HandleNamedEvent("main_notice");
-		}
-		else if (barbarianCooldown < gameLocal.time && !barbarian) {
-			barbarian = true;
-			player->undying = true;
-			barbarianDuration = gameLocal.time + 5500.0;
-			barbarianCooldown = gameLocal.time + 35500.0;
-			player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
-			player->mphud->HandleNamedEvent("main_notice");
-		}
-		else if (barbarianCooldown > gameLocal.time)
+
+		if (!loadoutSelected)
 		{
-			player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+			player->inventory.UseAmmo(2, 20);
+			player->GiveItem(hyperblaster);
+			barbarianSelected = true;
+			loadoutSelected = true;
+			player->mphud->SetStateString("main_notice_text", "BARBARIAN CLASS SELECTED");
+			player->mphud->HandleNamedEvent("main_notice");
+			return;
+		}
+		if (loadoutSelected && barbarianSelected)
+		{
+			if (barbarian) {
+				barbarian = false;
+				player->undying = false;
+				barbarianCooldown = gameLocal.time + 30000.0;
+				player->mphud->SetStateString("main_notice_text", "UNDYING RAGE ENDED");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			if (barbarianCooldown == 0 && !barbarian) {
+				barbarian = true;
+				player->undying = true;
+				barbarianDuration = gameLocal.time + 4500.0;
+				barbarianCooldown = gameLocal.time + 34500.0;
+				player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			else if (barbarianCooldown < gameLocal.time && !barbarian) {
+				barbarian = true;
+				player->undying = true;
+				barbarianDuration = gameLocal.time + 4500.0;
+				barbarianCooldown = gameLocal.time + 34500.0;
+				player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+			else if (barbarianCooldown > gameLocal.time)
+			{
+				player->mphud->SetStateString("main_notice_text", "SKILL ON COOLDOWN");
+				player->mphud->HandleNamedEvent("main_notice");
+			}
+		}
+		else
+		{
+			player->mphud->SetStateString("main_notice_text", "SKILL NOT AVAILABLE FOR CLASS");
 			player->mphud->HandleNamedEvent("main_notice");
 		}
 	}

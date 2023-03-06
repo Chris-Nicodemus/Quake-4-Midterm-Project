@@ -149,7 +149,8 @@ void rvWeaponMachinegun::Flashlight ( bool on ) {
 
 ===============================================================================
 */
-
+extern bool loadoutSelcted;
+extern bool sorcererSelected;
 CLASS_STATES_DECLARATION ( rvWeaponMachinegun )
 	STATE ( "Idle",				rvWeaponMachinegun::State_Idle)
 	STATE ( "Fire",				rvWeaponMachinegun::State_Fire )
@@ -175,6 +176,10 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 				SetStatus ( WP_READY );
 			}
 			//setting max ammo to 20
+			/*if (loadoutSelcted && !sorcererSelected)
+			{
+				gameLocal.GetLocalPlayer()->inventory.UseAmmo(2, subtract);
+			}*/
 			if (TotalAmmoCount() > 20)
 			{
 				int subtract = TotalAmmoCount() - 20;

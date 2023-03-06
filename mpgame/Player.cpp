@@ -5370,8 +5370,10 @@ idPlayer::FindInventoryItem
 idDict *idPlayer::FindInventoryItem( const char *name ) {
 	for ( int i = 0; i < inventory.items.Num(); i++ ) {
 		const char *iname = inventory.items[i]->GetString( "inv_name" );
+		gameLocal.Printf("Item name: (%s)\n", inventory.items[i]->GetString("inv_name"));
 		if ( iname && *iname ) {
 			if ( idStr::Icmp( name, iname ) == 0 ) {
+				gameLocal.Printf("Found item!\n");
 				return inventory.items[i];
 			}
 		}
@@ -5413,7 +5415,7 @@ void idPlayer::GiveItem( const char *itemname ) {
 	args.Set( "owner", name.c_str() );
 	args.Set( "givenToPlayer", va( "%d", entityNumber ) );
 
-	if ( gameLocal.mpGame.IsBuyingAllowedInTheCurrentGameMode() ) {
+	//if ( gameLocal.mpGame.IsBuyingAllowedInTheCurrentGameMode() ) {
 		// check if this is a weapon
 		if( !idStr::Icmpn( itemname, "weapon_", 7 ) ) {
 			int weaponIndex = SlotForWeapon( itemname );
@@ -5447,7 +5449,7 @@ void idPlayer::GiveItem( const char *itemname ) {
 				}
 			}
 		}
-	}
+	//}
 
 	// spawn the item if the player is alive
 	if ( health > 0 && idStr::Icmp( itemname, "ammorefill" ) ) {
