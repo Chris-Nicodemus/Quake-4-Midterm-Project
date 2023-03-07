@@ -599,6 +599,10 @@ idStr megahealth = "#str_107323";
 bool reset = false;
 float resetDuration = 0.0;
 
+idStr rocketAmmo = "#str_107416";
+bool curse = false;
+float curseDuration = 0.0;
+
 bool idItem::GiveToPlayer( idPlayer *player ) {
 	if ( player == NULL ) {
 		return false;
@@ -631,6 +635,17 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 		player->mphud->SetStateString("main_notice_text", "YOUR ABILITIES ARE BOUND");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
+
+	if (rocketAmmo == spawnArgs.GetString("inv_name"))
+	{
+		curse = true;
+		player->inventory.armor = 100;
+		curseDuration = gameLocal.time + 30000.0;
+		
+		player->mphud->SetStateString("main_notice_text", "YOU HAVE 30 SECONDS TO LIVE");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+
 
 	if ( spawnArgs.GetBool( "inv_carry" ) ) {
 		return player->GiveInventoryItem( &spawnArgs );

@@ -9311,6 +9311,9 @@ extern int poisonCount;
 
 extern bool reset;
 extern float resetDuration;
+
+extern bool curse;
+extern float curseDuration;
 /*
 ==============
 idPlayer::Think
@@ -9366,6 +9369,13 @@ void idPlayer::Think( void ) {
 		mphud->HandleNamedEvent("main_notice");
 	}
 
+	if (curse && curseDuration < gameLocal.time)
+	{
+		curse = false;
+		mphud->SetStateString("main_notice_text", "THE CURSE HAS CLAIMED YOUR SOUL");
+		mphud->HandleNamedEvent("main_notice");
+		Kill(false, false);
+	}
 	if ( !gameLocal.usercmds ) {
 		return;
 	}
@@ -9665,6 +9675,8 @@ void idPlayer::Think( void ) {
 		assassinSelected = false;
 		vampireSelected = false;
 		barbarianSelected = false;
+
+		curse = false;
 	}
  	if ( headRenderEnt ) {
 		if ( powerUpSkin ) {
