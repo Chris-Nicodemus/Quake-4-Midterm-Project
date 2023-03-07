@@ -3123,6 +3123,7 @@ void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 	}
 }
 
+extern int clear;
 idStr shotgun = "weapon_shotgun";
 idStr machinegun = "weapon_machinegun";
 idStr machinegunAmmo = "ammo_machinegun";
@@ -3135,7 +3136,8 @@ void Cmd_WraithWalk_f(const idCmdArgs& args) {
 
 	if (!loadoutSelected)
 	{
-		player->inventory.UseAmmo(2, 20);
+		
+		player->inventory.UseAmmo(2, clear);
 		player->GiveItem(shotgun);
 		wraithSelected = true;
 		loadoutSelected = true;
@@ -3189,7 +3191,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 
 	if (!loadoutSelected)
 	{
-		player->inventory.UseAmmo(2, 20);
+		player->inventory.UseAmmo(2, clear);
 		player->GiveItem(nailgun);
 		assassinSelected = true;
 		loadoutSelected = true;
@@ -3209,7 +3211,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 		if (assassinCooldown == 0 && fract) {
 			gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
 			player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
-			assassinCooldown = gameLocal.time + 20000.0;
+			assassinCooldown = gameLocal.time + 15000.0;
 			player->UpdateVisuals();
 			gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
 			player->mphud->SetStateString("main_notice_text", "TELEPORTED");
@@ -3218,7 +3220,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 		else if (assassinCooldown < gameLocal.time && fract) {
 			gameLocal.Printf("Was at:(%f,%f,%f)\n", origin.x, origin.y, origin.z);
 			player->SetOrigin(idVec3(results.endpos.x, results.endpos.y, results.endpos.z) + idVec3(0, 0, CM_CLIP_EPSILON));
-			assassinCooldown = gameLocal.time + 20000.0;
+			assassinCooldown = gameLocal.time + 15000.0;
 			player->UpdateVisuals();
 			gameLocal.Printf("Was at:(%f,%f,%f)\n", results.endpos.x, results.endpos.y, results.endpos.z);
 			player->mphud->SetStateString("main_notice_text", "TELEPORTED");
@@ -3252,7 +3254,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 
 		if (!loadoutSelected)
 		{
-			player->inventory.UseAmmo(2, 20);
+			player->inventory.UseAmmo(2, clear);
 			player->GiveItem(railgun);
 			vampireSelected = true;
 			loadoutSelected = true;
@@ -3308,7 +3310,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 
 		if (!loadoutSelected)
 		{
-			player->inventory.UseAmmo(2, 20);
+			player->inventory.UseAmmo(2, clear);
 			player->GiveItem(hyperblaster);
 			barbarianSelected = true;
 			loadoutSelected = true;

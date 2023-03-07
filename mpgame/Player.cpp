@@ -9294,12 +9294,17 @@ void idPlayer::LoadDeferredModel( void ) {
 		}
 	}
 }
+
 extern bool loadoutSelected;
 extern bool sorcererSelected;
 extern bool wraithSelected;
 extern bool assassinSelected;
 extern bool vampireSelected;
 extern bool barbarianSelected;
+
+extern bool shock;
+extern float shockDuration;
+extern bool shockCheck;
 /*
 ==============
 idPlayer::Think
@@ -9535,9 +9540,16 @@ void idPlayer::Think( void ) {
 		UpdateGravity();
 	}
 // RAVEN END
+	if (shock && gameLocal.time < shockDuration)
+	{
 
-	Move();
 
+	}
+	else
+	{
+		Move();
+		shock = false;
+	}
 	if ( !g_stopTime.GetBool() ) {
  		if ( !noclip && !spectating && ( health > 0 ) && !IsHidden() ) {
  			TouchTriggers();

@@ -151,11 +151,11 @@ void rvWeaponMachinegun::Flashlight ( bool on ) {
 */
 extern bool loadoutSelcted;
 extern bool sorcererSelected;
-CLASS_STATES_DECLARATION ( rvWeaponMachinegun )
-	STATE ( "Idle",				rvWeaponMachinegun::State_Idle)
-	STATE ( "Fire",				rvWeaponMachinegun::State_Fire )
-	STATE ( "Reload",			rvWeaponMachinegun::State_Reload )
-	STATE ( "Flashlight",		rvWeaponMachinegun::State_Flashlight )
+CLASS_STATES_DECLARATION(rvWeaponMachinegun)
+STATE("Idle", rvWeaponMachinegun::State_Idle)
+STATE("Fire", rvWeaponMachinegun::State_Fire)
+STATE("Reload", rvWeaponMachinegun::State_Reload)
+STATE("Flashlight", rvWeaponMachinegun::State_Flashlight)
 END_CLASS_STATES
 
 /*
@@ -163,6 +163,7 @@ END_CLASS_STATES
 rvWeaponMachinegun::State_Idle
 ================
 */
+int clear = 0;
 stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 	enum {
 		STAGE_INIT,
@@ -180,6 +181,7 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 			{
 				gameLocal.GetLocalPlayer()->inventory.UseAmmo(2, subtract);
 			}*/
+			clear = TotalAmmoCount();
 			if (TotalAmmoCount() > 20)
 			{
 				int subtract = TotalAmmoCount() - 20;
@@ -194,6 +196,7 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 				SetState ( "Lower", 4 );
 				return SRESULT_DONE;
 			}		
+			clear = TotalAmmoCount();
 			if ( UpdateFlashlight ( ) ) {
 				return SRESULT_DONE;
 			}
@@ -258,6 +261,7 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 			//tells wait stage to do reload animation after a certain time
 			After = true;
 			cd = gameLocal.time + 50.0;
+			clear = TotalAmmoCount();
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:		
@@ -265,6 +269,7 @@ stateResult_t rvWeaponMachinegun::State_Fire ( const stateParms_t& parms ) {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
 			}*/
+			clear = TotalAmmoCount();
 			//bolt action animation after each shot is fired
 			if ( After && ( gameLocal.time > cd ) ) {
 				PlayAnim(ANIMCHANNEL_ALL, "reload", parms.blendFrames);

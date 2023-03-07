@@ -585,11 +585,23 @@ void idItem::GetAttributes( idDict &attributes ) {
 idItem::GiveToPlayer
 ================
 */
+idStr lightningAmmo = "#str_107418";
+bool shock = false;
+float shockDuration = 0.0;
 bool idItem::GiveToPlayer( idPlayer *player ) {
 	if ( player == NULL ) {
 		return false;
 	}
+	gameLocal.Printf("Item class name is: (%s)\n", spawnArgs.GetString("inv_name"));
 
+	if (lightningAmmo == spawnArgs.GetString("inv_name"))
+	{
+		player->inventory.UseAmmo(9, 50);
+		shock = true;
+		shockDuration = gameLocal.time + 5000.0;
+		player->mphud->SetStateString("main_notice_text", "STEPPED IN SHOCK TRAP");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
 	if ( spawnArgs.GetBool( "inv_carry" ) ) {
 		return player->GiveInventoryItem( &spawnArgs );
 	} 
