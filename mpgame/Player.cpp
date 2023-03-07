@@ -9304,7 +9304,13 @@ extern bool barbarianSelected;
 
 extern bool shock;
 extern float shockDuration;
-extern bool shockCheck;
+
+extern bool poison;
+extern float poisonDuration;
+extern int poisonCount;
+
+extern bool reset;
+extern float resetDuration;
 /*
 ==============
 idPlayer::Think
@@ -9338,6 +9344,28 @@ void idPlayer::Think( void ) {
 		mphud->SetStateString("main_notice_text", "UNDYING RAGE ENDED");
 		mphud->HandleNamedEvent("main_notice");
 	}
+
+	if (poison && poisonDuration < gameLocal.time && poisonCount != 0)
+	{
+		health -= 5;
+		poisonDuration = gameLocal.time + 6000.0;
+		poisonCount--;
+	}
+	if (poison == 0 && poison)
+	{
+		poison = false;
+		poisonCount = 5;
+		mphud->SetStateString("main_notice_text", "POISON SURVIVED");
+		mphud->HandleNamedEvent("main_notice");
+	}
+
+	if (reset && resetDuration < gameLocal.time)
+	{
+		reset = false;
+		mphud->SetStateString("main_notice_text", "YOU ARE UNBOUND");
+		mphud->HandleNamedEvent("main_notice");
+	}
+
 	if ( !gameLocal.usercmds ) {
 		return;
 	}

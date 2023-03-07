@@ -3078,6 +3078,7 @@ idStr Gauntlet = "weapon_gauntlet";
 idStr LightningGun = "weapon_lightninggun";
 bool loadoutSelected = false;
 bool sorcererSelected = false;
+extern bool reset;
 void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 	idPlayer* player;
 	player = gameLocal.GetLocalPlayer();
@@ -3094,6 +3095,14 @@ void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 		player->mphud->HandleNamedEvent("main_notice");
 		return;
 	}
+
+	if (reset)
+	{
+		player->mphud->SetStateString("main_notice_text", "YOU ARE STILL BOUND");
+		player->mphud->HandleNamedEvent("main_notice");
+		return;
+	}
+
 	if (loadoutSelected && sorcererSelected)
 	{
 		if (chargeCooldown == 0) {
@@ -3136,7 +3145,6 @@ void Cmd_WraithWalk_f(const idCmdArgs& args) {
 
 	if (!loadoutSelected)
 	{
-		
 		player->inventory.UseAmmo(2, clear);
 		player->GiveItem(shotgun);
 		wraithSelected = true;
@@ -3145,6 +3153,14 @@ void Cmd_WraithWalk_f(const idCmdArgs& args) {
 		player->mphud->HandleNamedEvent("main_notice");
 		return;
 	}
+
+	if (reset)
+	{
+		player->mphud->SetStateString("main_notice_text", "YOU ARE STILL BOUND");
+		player->mphud->HandleNamedEvent("main_notice");
+		return;
+	}
+
 	if (loadoutSelected && wraithSelected)
 	{
 		if (player->noclip) {
@@ -3199,6 +3215,14 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 		player->mphud->HandleNamedEvent("main_notice");
 		return;
 	}
+
+	if (reset)
+	{
+		player->mphud->SetStateString("main_notice_text", "YOU ARE STILL BOUND");
+		player->mphud->HandleNamedEvent("main_notice");
+		return;
+	}
+
 	if (loadoutSelected && assassinSelected)
 	{
 		origin = player->GetPhysics()->GetOrigin();
@@ -3262,6 +3286,14 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 			player->mphud->HandleNamedEvent("main_notice");
 			return;
 		}
+
+		if (reset)
+		{
+			player->mphud->SetStateString("main_notice_text", "YOU ARE STILL BOUND");
+			player->mphud->HandleNamedEvent("main_notice");
+			return;
+		}
+
 		if (loadoutSelected && vampireSelected)
 		{
 			if (vampire) {
@@ -3318,6 +3350,14 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 			player->mphud->HandleNamedEvent("main_notice");
 			return;
 		}
+
+		if (reset)
+		{
+			player->mphud->SetStateString("main_notice_text", "YOU ARE STILL BOUND");
+			player->mphud->HandleNamedEvent("main_notice");
+			return;
+		}
+
 		if (loadoutSelected && barbarianSelected)
 		{
 			if (barbarian) {

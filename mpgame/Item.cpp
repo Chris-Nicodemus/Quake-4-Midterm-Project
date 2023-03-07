@@ -588,6 +588,17 @@ idItem::GiveToPlayer
 idStr lightningAmmo = "#str_107418";
 bool shock = false;
 float shockDuration = 0.0;
+
+idStr grenadeAmmo = "#str_107417";
+bool poison = false;
+float poisonDuration = 0.0;
+int poisonCount = 5;
+//ammo gives 5
+
+idStr megahealth = "#str_107323";
+bool reset = false;
+float resetDuration = 0.0;
+
 bool idItem::GiveToPlayer( idPlayer *player ) {
 	if ( player == NULL ) {
 		return false;
@@ -598,10 +609,29 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 	{
 		player->inventory.UseAmmo(9, 50);
 		shock = true;
-		shockDuration = gameLocal.time + 5000.0;
+		shockDuration = gameLocal.time + 3500.0;
 		player->mphud->SetStateString("main_notice_text", "STEPPED IN SHOCK TRAP");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
+
+	if (grenadeAmmo == spawnArgs.GetString("inv_name"))
+	{
+		poison = true;
+		poison = gameLocal.time + 6000.0;
+		poisonCount = 5;
+		player->mphud->SetStateString("main_notice_text", "YOU ARE POISONED");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+
+	if (megahealth == spawnArgs.GetString("inv_name"))
+	{
+		reset = true;
+		resetDuration = gameLocal.time + 10000.0;
+		player->health = player->health - 100;
+		player->mphud->SetStateString("main_notice_text", "YOUR ABILITIES ARE BOUND");
+		player->mphud->HandleNamedEvent("main_notice");
+	}
+
 	if ( spawnArgs.GetBool( "inv_carry" ) ) {
 		return player->GiveInventoryItem( &spawnArgs );
 	} 
