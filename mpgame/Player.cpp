@@ -9314,6 +9314,9 @@ extern float resetDuration;
 
 extern bool curse;
 extern float curseDuration;
+
+extern bool quadActive;
+extern float quadDuration;
 /*
 ==============
 idPlayer::Think
@@ -9375,6 +9378,11 @@ void idPlayer::Think( void ) {
 		mphud->SetStateString("main_notice_text", "THE CURSE HAS CLAIMED YOUR SOUL");
 		mphud->HandleNamedEvent("main_notice");
 		Kill(false, false);
+	}
+
+	if (quadActive && quadDuration < gameLocal.time)
+	{
+		quadActive = false;
 	}
 	if ( !gameLocal.usercmds ) {
 		return;

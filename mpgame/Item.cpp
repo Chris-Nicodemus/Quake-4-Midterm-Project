@@ -603,11 +603,15 @@ idStr rocketAmmo = "#str_107416";
 bool curse = false;
 float curseDuration = 0.0;
 
+idStr quad = "#str_107423";
+bool quadActive = false;
+float quadDuration = 0.0
+;
 bool idItem::GiveToPlayer( idPlayer *player ) {
 	if ( player == NULL ) {
 		return false;
 	}
-	gameLocal.Printf("Item class name is: (%s)\n", spawnArgs.GetString("inv_name"));
+	//gameLocal.Printf("Item class name is: (%s)\n", spawnArgs.GetString("inv_name"));
 
 	if (lightningAmmo == spawnArgs.GetString("inv_name"))
 	{
@@ -620,6 +624,7 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 
 	if (grenadeAmmo == spawnArgs.GetString("inv_name"))
 	{
+		player->inventory.UseAmmo(8, 5);
 		poison = true;
 		poison = gameLocal.time + 6000.0;
 		poisonCount = 5;
@@ -639,13 +644,35 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 	if (rocketAmmo == spawnArgs.GetString("inv_name"))
 	{
 		curse = true;
-		player->inventory.armor = 100;
-		curseDuration = gameLocal.time + 30000.0;
+		if (!quadActive)
+		{
+			player->health = 100;
+			player->inventory.armor = 100;
+		}
+		curseDuration = gameLocal.time + 20000.0;
 		
-		player->mphud->SetStateString("main_notice_text", "YOU HAVE 30 SECONDS TO LIVE");
+		player->mphud->SetStateString("main_notice_text", "YOU HAVE 20 SECONDS TO LIVE");
 		player->mphud->HandleNamedEvent("main_notice");
 	}
 
+	if (quad == spawnArgs.GetString("inv_name"))
+	{
+		quadActive = true;
+		quadDuration = gameLocal.time + 30000.0;
+		if (player->health <= 70)
+		{
+			player->Kill(false, false);
+			player->mphud->SetStateString("main_notice_text", "YOU HAVE BURNED YOUR SOUL");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		else
+		{
+			player->health = player->health - 70;
+			player->mphud->SetStateString("main_notice_text", "YOU HAVE SACRIFICED LIFE FOR POWER");
+			player->mphud->HandleNamedEvent("main_notice");
+		}
+		
+	}
 
 	if ( spawnArgs.GetBool( "inv_carry" ) ) {
 		return player->GiveInventoryItem( &spawnArgs );
