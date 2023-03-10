@@ -1135,6 +1135,8 @@ bool idAI::DoDormantTests ( void ) {
 idAI::Think
 =====================
 */
+idStr buddy = "monster_bossbuddy";
+bool killed = false;
 void idAI::Think( void ) {
 
 	// if we are completely closed off from the player, don't do anything at all
@@ -1152,6 +1154,12 @@ void idAI::Think( void ) {
 		aiManager.timerThink.Start ( );
 	}
 
+
+	if (health <= 0 && spawnArgs.GetString("classname") == buddy && !killed)
+	{
+		gameLocal.Printf("Killed buddy\n");
+		killed = true;
+	}
 	if ( thinkFlags & TH_THINK ) {	
 		// clear out the enemy when he dies or is hidden
 		idEntity* enemyEnt = enemy.ent;

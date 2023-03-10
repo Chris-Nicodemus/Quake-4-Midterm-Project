@@ -5952,6 +5952,13 @@ void idGameLocal::RadiusDamage( const idVec3 &origin, idEntity *inflictor, idEnt
 
 			dir.Normalize();
 			ent->Damage( inflictor, attacker, dir, damageDefName, damageScale, CLIPMODEL_ID_TO_JOINT_HANDLE(ent->GetPhysics()->GetClipModel()->GetId()) );
+
+			/*gameLocal.Printf("Attacking: (%s)\n", ent->GetEntityDefName());
+			idStr buddy = "monster_bossbuddy";
+			if (ent->health <= 0 && ent->GetEntityDefName() == buddy)
+			{
+					gameLocal.Printf("Killed buddy\n");
+			}*/
 			if (gameLocal.time > vampireDuration && vampire) {
 				vampire = false;
 				idPlayer* player;

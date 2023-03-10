@@ -5,7 +5,7 @@
 #include "../Game_local.h"
 
 //------------------------------------------------------------
-class rvMonsterBossBuddy : public idAI 
+class rvMonsterBossBuddy : public idAI
 //------------------------------------------------------------
 {
 public:
@@ -106,7 +106,7 @@ void rvMonsterBossBuddy::Spawn( void )
 	mActionMeleeMoveAttack.Init( spawnArgs,	"action_meleeMoveAttack",	NULL,	AIACTIONF_ATTACK );
 	mActionSlashMoveAttack.Init( spawnArgs,	"action_slashMoveAttack",	NULL,	AIACTIONF_ATTACK );
 	mActionMeleeAttack.Init( spawnArgs,		"action_meleeAttack",		NULL,	AIACTIONF_ATTACK );
-
+	gameLocal.Printf("Classname is: (%s)\n", spawnArgs.GetString("classname"));
 	InitSpawnArgsVariables();
 	mShields = mMaxShields;
 
