@@ -164,6 +164,7 @@ rvWeaponMachinegun::State_Idle
 ================
 */
 int clear = 0;
+extern bool clearMachinegun;
 stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 	enum {
 		STAGE_INIT,
@@ -177,10 +178,11 @@ stateResult_t rvWeaponMachinegun::State_Idle( const stateParms_t& parms ) {
 				SetStatus ( WP_READY );
 			}
 			//setting max ammo to 20
-			/*if (loadoutSelcted && !sorcererSelected)
+			if (clearMachinegun && TotalAmmoCount() > 0)
 			{
+				int subtract = TotalAmmoCount();
 				gameLocal.GetLocalPlayer()->inventory.UseAmmo(2, subtract);
-			}*/
+			}
 			clear = TotalAmmoCount();
 			if (TotalAmmoCount() > 20)
 			{

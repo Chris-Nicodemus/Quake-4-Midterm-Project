@@ -9301,6 +9301,7 @@ extern bool wraithSelected;
 extern bool assassinSelected;
 extern bool vampireSelected;
 extern bool barbarianSelected;
+extern bool clearMachinegun;
 
 extern bool shock;
 extern float shockDuration;
@@ -9384,10 +9385,14 @@ void idPlayer::Think( void ) {
 	{
 		quadActive = false;
 	}
-	if (quadActive && health > 30)
+	if (health <= 0 && quadActive)
+	{
+		quadActive = false;
+	}
+	/*if (quadActive && health > 30)
 	{
 		health = 30;
-	}
+	}*/
 	if ( !gameLocal.usercmds ) {
 		return;
 	}
@@ -9687,6 +9692,7 @@ void idPlayer::Think( void ) {
 		assassinSelected = false;
 		vampireSelected = false;
 		barbarianSelected = false;
+		clearMachinegun = false;
 
 		curse = false;
 	}

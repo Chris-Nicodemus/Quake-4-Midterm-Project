@@ -3632,6 +3632,8 @@ inflictor, attacker, dir, and point can be NULL for environmental effects
 
 ============
 */
+extern bool vampire;
+extern float vampireDuration;
 void idEntity::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir, 
 					  const char *damageDefName, const float damageScale, const int location ) {
 	if ( forwardDamageEnt.IsValid() ) {
@@ -3657,7 +3659,7 @@ void idEntity::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 	}
 
 	int	damage = damageDef->GetInt( "damage" );
-
+	
 	// inform the attacker that they hit someone
 	attacker->DamageFeedback( this, inflictor, damage );
 	if ( damage ) {

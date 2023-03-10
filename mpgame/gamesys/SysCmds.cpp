@@ -3133,6 +3133,7 @@ void Cmd_SorcererCharge_f(const idCmdArgs& args) {
 }
 
 extern int clear;
+bool clearMachinegun = false;
 idStr shotgun = "weapon_shotgun";
 idStr machinegun = "weapon_machinegun";
 idStr machinegunAmmo = "ammo_machinegun";
@@ -3149,6 +3150,7 @@ void Cmd_WraithWalk_f(const idCmdArgs& args) {
 		player->GiveItem(shotgun);
 		wraithSelected = true;
 		loadoutSelected = true;
+		clearMachinegun = true;
 		player->mphud->SetStateString("main_notice_text", "WRAITH CLASS SELECTED");
 		player->mphud->HandleNamedEvent("main_notice");
 		return;
@@ -3211,6 +3213,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 		player->GiveItem(nailgun);
 		assassinSelected = true;
 		loadoutSelected = true;
+		clearMachinegun = true;
 		player->mphud->SetStateString("main_notice_text", "ASSASSIN CLASS SELECTED");
 		player->mphud->HandleNamedEvent("main_notice");
 		return;
@@ -3282,6 +3285,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 			player->GiveItem(railgun);
 			vampireSelected = true;
 			loadoutSelected = true;
+			clearMachinegun = true;
 			player->mphud->SetStateString("main_notice_text", "VAMPIRE CLASS SELECTED");
 			player->mphud->HandleNamedEvent("main_notice");
 			return;
@@ -3346,6 +3350,7 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 			player->GiveItem(hyperblaster);
 			barbarianSelected = true;
 			loadoutSelected = true;
+			clearMachinegun = true;
 			player->mphud->SetStateString("main_notice_text", "BARBARIAN CLASS SELECTED");
 			player->mphud->HandleNamedEvent("main_notice");
 			return;

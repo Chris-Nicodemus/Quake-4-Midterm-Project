@@ -7987,10 +7987,24 @@ idEntity* idGameLocal::HitScan(
 							player->mphud->SetStateString("main_notice_text", "BLOOD THIRST ENDED");
 							player->mphud->HandleNamedEvent("main_notice");
 						}
-						else if (vampire) {
-							float healFactor = hitscanDict.GetInt("damage");
-							healFactor *= 0.25;
+						else if (vampire && hitscanDict.GetString("classname") == name) {
+							//int healFactor = hitscanDict.GetInt("damage");
+							int healFactor = 25;
+							//gameLocal.Printf("Damage is: (%d)\n", hitscanDict.GetInt("damage"));
 							gameLocal.Printf("Healed for:(%d)\n", healFactor);
+							gameLocal.Printf("Doing a hitscan heal\n");
+							owner->health = owner->health + healFactor;
+							if (owner->health > 100)
+							{
+								owner->health = 100;
+							}
+						}
+						else if (vampire)
+						{
+							int healFactor = 10;
+							//gameLocal.Printf("Damage is: (%d)\n", hitscanDict.GetInt("damage"));
+							gameLocal.Printf("Healed for:(%d)\n", healFactor);
+							gameLocal.Printf("Doing a hitscan heal\n");
 							owner->health = owner->health + healFactor;
 							if (owner->health > 100)
 							{
