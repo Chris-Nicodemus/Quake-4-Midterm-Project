@@ -9384,6 +9384,10 @@ void idPlayer::Think( void ) {
 	{
 		quadActive = false;
 	}
+	if (quadActive && health > 30)
+	{
+		health = 30;
+	}
 	if ( !gameLocal.usercmds ) {
 		return;
 	}

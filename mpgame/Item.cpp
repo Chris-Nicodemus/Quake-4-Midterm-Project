@@ -671,6 +671,10 @@ bool idItem::GiveToPlayer( idPlayer *player ) {
 			player->mphud->SetStateString("main_notice_text", "YOU HAVE SACRIFICED LIFE FOR POWER");
 			player->mphud->HandleNamedEvent("main_notice");
 		}
+		if (curse)
+		{
+			player->inventory.armor = 0;
+		}
 		
 	}
 
