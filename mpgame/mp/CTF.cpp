@@ -121,7 +121,7 @@ void rvCTF_AssaultPoint::Event_Touch( idEntity *activator, trace_t *trace ) {
 
 	if ( owner == player->team )
 		return;
-
+	gameLocal.Printf("Event_Touch gave me the flag\n");
 	int enemyPowerup = -1;
 	int friendlyPowerup = -1;
 	

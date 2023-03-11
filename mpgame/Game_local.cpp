@@ -5953,12 +5953,7 @@ void idGameLocal::RadiusDamage( const idVec3 &origin, idEntity *inflictor, idEnt
 			dir.Normalize();
 			ent->Damage( inflictor, attacker, dir, damageDefName, damageScale, CLIPMODEL_ID_TO_JOINT_HANDLE(ent->GetPhysics()->GetClipModel()->GetId()) );
 
-			/*gameLocal.Printf("Attacking: (%s)\n", ent->GetEntityDefName());
-			idStr buddy = "monster_bossbuddy";
-			if (ent->health <= 0 && ent->GetEntityDefName() == buddy)
-			{
-					gameLocal.Printf("Killed buddy\n");
-			}*/
+			
 			if (gameLocal.time > vampireDuration && vampire) {
 				vampire = false;
 				idPlayer* player;
@@ -7984,6 +7979,11 @@ idEntity* idGameLocal::HitScan(
 							if ( damage && damage[0] ) {
 								actualHitEnt->Damage( owner, owner, dir, damage, damageScale, CLIPMODEL_ID_TO_JOINT_HANDLE( tr.c.id ) );
 							}
+
+							/*if (owner->IsType(idPlayer::GetClassType()))
+							{
+								owner->DamageFeedback(ent,owner)
+							}*/
 						}
 					if ( !g_perfTest_weaponNoFX.GetBool() ) {
 						ent->AddDamageEffect( tr, dir, hitscanDict.GetString ( "def_damage" ), owner );
@@ -8021,7 +8021,7 @@ idEntity* idGameLocal::HitScan(
 					}
 				}
 			}
-
+					
 
 			// Pass through actors
 			if ( ent->IsType ( idActor::GetClassType() ) && penetrate > 0.0f ) {			

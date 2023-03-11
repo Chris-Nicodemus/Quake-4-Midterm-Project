@@ -3652,7 +3652,7 @@ void idEntity::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 	if ( !attacker ) {
 		attacker = gameLocal.world;
 	}
-
+	
 	const idDict *damageDef = gameLocal.FindEntityDefDict( damageDefName, false );
 	if ( !damageDef ) {
 		gameLocal.Error( "Unknown damageDef '%s'\n", damageDefName );
@@ -3662,6 +3662,7 @@ void idEntity::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &di
 
 	// inform the attacker that they hit someone
 	attacker->DamageFeedback( this, inflictor, damage );
+	
 	if ( damage ) {
 		// do the damage
 		//jshepard: this is kinda important, no?

@@ -13107,10 +13107,31 @@ void idPlayer::Flashlight ( bool on ) {
 idPlayer::DamageFeedback
 ================
 */
+//extern int owner;
+idStr buddy = "monster_bossbuddy";
+//bool killed = false;
+extern int team;
+//extern int powerup;
 void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) {
 
 	assert( !gameLocal.isClient );
 	
+	gameLocal.Printf("DamageFeedback given\n");
+	gameLocal.Printf("classname is: (%s)\n", victim->GetEntityDefName());
+	gameLocal.Printf("Victim Health is: (%d)\n", victim->health - damage);
+	if (victim->health - damage <= 0 && strcmp(victim->GetEntityDefName(),"monster_bossbuddy") == 0)
+	{
+		gameLocal.Printf("Killed buddy in player\n");
+		if (team == TEAM_MARINE) 
+		{
+			GivePowerUp(POWERUP_CTF_STROGGFLAG, -1);
+		}
+		else if (team == TEAM_STROGG)
+		{
+			GivePowerUp(POWERUP_CTF_MARINEFLAG, -1);
+		}
+		gameLocal.mpGame.ScheduleAnnouncerSound(AS_CTF_YOU_HAVE_FLAG, gameLocal.time, -1, true);
+	}
 	//rvTramCars weren't built on the idActor inheritance hierarchy but need to be treated like one when shot.
 	//TODO: Maybe add a key to entity flags that will allow them to be shot as actors even if they aren't actors?
 	if ( !victim || ( !victim->IsType( idActor::GetClassType() ) && !victim->IsType( rvTramCar::GetClassType() ) ) || victim->health <= 0 ) {
@@ -13118,7 +13139,7 @@ void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damag
 	}
 
 	bool armorHit = false;
-
+	
 	if ( gameLocal.isMultiplayer && victim->IsType( idPlayer::GetClassType() ) ) {
 		if ( this == victim ) {
 			// no feedback for self hits

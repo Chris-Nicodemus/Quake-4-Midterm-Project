@@ -1135,8 +1135,10 @@ bool idAI::DoDormantTests ( void ) {
 idAI::Think
 =====================
 */
-idStr buddy = "monster_bossbuddy";
-bool killed = false;
+//extern int owner;
+extern idStr buddy/* = "monster_bossbuddy"*/;
+extern bool killed;
+extern int team;
 void idAI::Think( void ) {
 
 	// if we are completely closed off from the player, don't do anything at all
@@ -1155,11 +1157,35 @@ void idAI::Think( void ) {
 	}
 
 
-	if (health <= 0 && spawnArgs.GetString("classname") == buddy && !killed)
+	/*if (health <= 0 && spawnArgs.GetString("classname") == buddy && !killed)
 	{
-		gameLocal.Printf("Killed buddy\n");
+		gameLocal.Printf("Killed buddy in AI\n");
 		killed = true;
-	}
+
+		switch (team) {
+		case TEAM_MARINE: {
+			//powerup = POWERUP_CTF_MARINEFLAG;
+			gameLocal.mpGame.SetFlagEntity(this, TEAM_MARINE);
+			gameLocal.Printf("Marines got the flag!\n");
+			break;
+		}
+		case TEAM_STROGG: {
+			//powerup = POWERUP_CTF_STROGGFLAG;
+			gameLocal.mpGame.SetFlagEntity(this, TEAM_STROGG);
+			gameLocal.Printf("Stroggs got the flag!\n");
+			break;
+		}
+		case TEAM_MAX: {
+			//powerup = POWERUP_CTF_ONEFLAG;
+			break;
+		}
+		default:
+			gameLocal.Warning("Unknown ctf flag team '%d' on entity '%s'", team, name.c_str());
+			//PostEventMS(&EV_Remove, 0);
+			//return;
+		}
+		
+	}*/
 	if ( thinkFlags & TH_THINK ) {	
 		// clear out the enemy when he dies or is hidden
 		idEntity* enemyEnt = enemy.ent;
@@ -2674,6 +2700,7 @@ void idAI::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) 
 	} else if ( victim == enemy.ent ) {
 		aifl.hitEnemy = true;
 	}
+
 }
 
 /*

@@ -1170,7 +1170,7 @@ void rvCTFGameState::GameStateChanged( void ) {
 		gameLocal.Warning( "rvCTFGameState::GameStateChanged() - NULL local player\n" ) ;
 		return;
 	}
-
+	gameLocal.Printf("GameStateChanged handles my flag stuff\n");
 	bool noSounds = false;
 
 	for( int i = 0; i < TEAM_MAX; i++ ) {

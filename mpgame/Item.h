@@ -211,10 +211,12 @@ public:
 	virtual void			Think( void );
 
 	virtual bool			Collide( const trace_t &collision, const idVec3 &velocity );
-
-private:
+	//moved these two to public
 	int						team;
 	int						powerup;
+private:
+
+
 	bool					dropped;
 	
 	void					Event_ResetFlag( void );
