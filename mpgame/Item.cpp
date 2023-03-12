@@ -2241,6 +2241,7 @@ rvItemCTFFlag::ResetFlag
 */
 void rvItemCTFFlag::ResetFlag( int powerup ) {
 	idEntity* ent;
+	idDict dict;
 	for ( ent = gameLocal.spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next() ) {
 		// Make sure no players have the flag anymore
 // RAVEN BEGIN
@@ -2252,7 +2253,11 @@ void rvItemCTFFlag::ResetFlag( int powerup ) {
 		}
 	
 		// If its not a CTF flag item then skip it
-		if ( !ent->IsType( rvItemCTFFlag::Type ) ) {
+		if (!(strcmp(ent->GetEntityDefName(), "monster_bossbuddy") == 0))
+		{
+			continue;
+		}
+		/*if (!ent->IsType(rvItemCTFFlag::Type)) {
 			continue;			
 		}
 		
@@ -2281,9 +2286,12 @@ void rvItemCTFFlag::ResetFlag( int powerup ) {
 			team = TEAM_MAX;
 		}
 		
-		((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagState( team, FS_AT_BASE );
+		((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagState( team, FS_AT_BASE );*/
 	}	
-
+	dict.Set("classname", "monster_bossbuddy");
+	//ent->Spawn();
+	gameLocal.Printf("Got to boss buddy\n");
+	gameLocal.SpawnEntityDef(dict, &ent);
 }
   
 /*

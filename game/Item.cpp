@@ -2153,7 +2153,11 @@ void rvItemCTFFlag::ResetFlag( int powerup ) {
 		}
 	
 		// If its not a CTF flag item then skip it
-		if ( !ent->IsType( rvItemCTFFlag::Type ) ) {
+		/*if (!(strcmp(ent->GetEntityDefName(), "monster_bossbuddy") == 0))
+		{
+			continue;
+		}*/
+		if (!ent->IsType(rvItemCTFFlag::Type)) {
 			continue;			
 		}
 		
@@ -2183,6 +2187,8 @@ void rvItemCTFFlag::ResetFlag( int powerup ) {
 		}
 		
 		((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagState( team, FS_AT_BASE );
+
+		//ent->Spawn();
 	}	
 
 }
