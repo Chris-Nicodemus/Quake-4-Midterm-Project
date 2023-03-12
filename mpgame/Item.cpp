@@ -2292,6 +2292,7 @@ void rvItemCTFFlag::ResetFlag( int powerup ) {
 	//ent->Spawn();
 	gameLocal.Printf("Got to boss buddy\n");
 	gameLocal.SpawnEntityDef(dict, &ent);
+	//please be safe
 }
   
 /*
