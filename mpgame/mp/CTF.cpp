@@ -141,7 +141,7 @@ void rvCTF_AssaultPoint::Event_Touch( idEntity *activator, trace_t *trace ) {
 			enemyPowerup = POWERUP_CTF_MARINEFLAG;
 		}
 	}
-
+	
 	if ( !player->PowerUpActive ( enemyPowerup ) ) {
 		return;
 	}

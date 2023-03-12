@@ -1944,7 +1944,7 @@ void rvItemCTFFlag::Spawn () {
 
 	bool reset = false;
 	spawnArgs.GetBool ( "reset", "0", reset );
-
+	
 	switch ( team ) {
 		case TEAM_MARINE: {
 			powerup = POWERUP_CTF_MARINEFLAG;

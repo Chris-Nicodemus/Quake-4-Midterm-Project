@@ -2043,7 +2043,7 @@ void rvItemCTFFlag::Spawn () {
 
 	bool reset = false;
 	spawnArgs.GetBool ( "reset", "0", reset );
-
+	
 	switch ( team ) {
 		case TEAM_MARINE: {
 			powerup = POWERUP_CTF_MARINEFLAG;
@@ -2169,7 +2169,7 @@ bool rvItemCTFFlag::GiveToPlayer( idPlayer* player ) {
 		return false;
 	}
 
-	player->GivePowerUp( enemyPowerup, -1 );
+	//player->GivePowerUp( enemyPowerup, -1 );
 // RITUAL BEGIN
 // squirrel: Mode-agnostic buymenus
 	player->GiveCash( (float)gameLocal.mpGame.mpBuyingManager.GetIntValueForKey( "playerCashAward_flagStolen", 0 ) );
@@ -2196,7 +2196,7 @@ bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 	if ( gameLocal.isServer ) {
 		SendPickupMsg( player->entityNumber );
 	}
-
+	gameLocal.Printf("flag picked up\n");
 	// Check for global acquire sounds in multiplayer
 	if ( gameLocal.isMultiplayer && spawnArgs.GetBool( "globalAcquireSound" ) ) {
 		gameLocal.mpGame.PlayGlobalItemAcquireSound( entityDefNumber );
@@ -2208,22 +2208,22 @@ bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 	ActivateTargets( player );
 
 	// clear our contents so the object isn't picked up twice
-	GetPhysics()->SetContents( 0 );
+	//GetPhysics()->SetContents( 0 );
 
 	// hide the model
-	Hide();
+	//Hide();
 
-	gameLocal.mpGame.SetFlagEntity( NULL, team );
+	//gameLocal.mpGame.SetFlagEntity( NULL, team );
 
 	gameLocal.mpGame.AddPlayerTeamScore( player, 1 );
-
-	if( gameLocal.gameType == GAME_CTF || gameLocal.gameType == GAME_ARENA_CTF ) { 
+	/*
+	if (gameLocal.gameType == GAME_CTF || gameLocal.gameType == GAME_ARENA_CTF) {
 		((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagState( team, FS_TAKEN );
 	} else if( gameLocal.gameType == GAME_1F_CTF || gameLocal.gameType == GAME_ARENA_1F_CTF ) {
 		((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagState( team, (player->team == TEAM_MARINE ? FS_TAKEN_MARINE : FS_TAKEN_STROGG) );
 	}
-	
-	((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagCarrier( team, player->entityNumber );
+	*/
+	//((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagCarrier( team, player->entityNumber );
 
 	if ( spawnArgs.GetBool( "dropped" ) ) {
 		PostEventMS( &EV_Remove, 0 );
