@@ -369,6 +369,23 @@ bool rvMonsterBossBuddy::PerformAction( rvAIAction* action, bool (idAI::*conditi
 void rvMonsterBossBuddy::Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir, 
 								const char *damageDefName, const float damageScale, const int location ) 
 {
+	if (inflictor->IsType(idPlayer::GetClassType())) {
+		idPlayer* player = gameLocal.GetLocalPlayer();
+		if (team == player->team)
+		{
+			if (team == TEAM_MARINE)
+			{
+				team = TEAM_STROGG;
+				gameLocal.Printf("Team Changed to STROGG\n");
+			}
+			else
+			{
+				team = TEAM_MARINE;
+				gameLocal.Printf("Team Changed to MARINE\n");
+			}
+			gameLocal.Printf("We is Strogg\n");
+		}
+	}
 	// get damage amount so we can decay the shields and check for ignoreShields
 	const idDict *damageDef = gameLocal.FindEntityDefDict( damageDefName, false );
 	if ( !damageDef ) 

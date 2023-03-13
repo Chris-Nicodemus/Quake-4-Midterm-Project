@@ -13116,9 +13116,13 @@ void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damag
 
 	assert( !gameLocal.isClient );
 	
-	gameLocal.Printf("DamageFeedback given\n");
+	/*gameLocal.Printf("DamageFeedback given\n");
 	gameLocal.Printf("classname is: (%s)\n", victim->GetEntityDefName());
-	gameLocal.Printf("Victim Health is: (%d)\n", victim->health - damage);
+	gameLocal.Printf("Victim Health is: (%d)\n", victim->health - damage);*/
+	/*if (victim->IsType(idAI::GetClassType()))
+	{
+		idAI* buddySwitch = victim;
+	}*/
 	if (victim->health - damage <= 0 && strcmp(victim->GetEntityDefName(),"monster_bossbuddy") == 0)
 	{
 		gameLocal.Printf("Killed buddy in player\n");
