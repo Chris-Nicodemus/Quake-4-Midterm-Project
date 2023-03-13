@@ -2182,6 +2182,7 @@ bool rvItemCTFFlag::GiveToPlayer( idPlayer* player ) {
 rvItemCTFFlag::Pickup
 ================
 */
+bool spawned = true;
 bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 	if( gameLocal.isClient ) {
 		// no client-side CTF flag prediction
@@ -2196,7 +2197,8 @@ bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 	if ( gameLocal.isServer ) {
 		SendPickupMsg( player->entityNumber );
 	}
-	gameLocal.Printf("flag picked up\n");
+	team = spawnArgs.GetInt("team");
+	gameLocal.Printf("flag picked up, team number is %d\n", team);
 	// Check for global acquire sounds in multiplayer
 	if ( gameLocal.isMultiplayer && spawnArgs.GetBool( "globalAcquireSound" ) ) {
 		gameLocal.mpGame.PlayGlobalItemAcquireSound( entityDefNumber );
@@ -2208,11 +2210,32 @@ bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 	ActivateTargets( player );
 
 	// clear our contents so the object isn't picked up twice
-	//GetPhysics()->SetContents( 0 );
-
 	// hide the model
-	//Hide();
-
+	if(dropped)
+	{
+		gameLocal.Printf("Flag was dropped\n");
+		GetPhysics()->SetContents(0);
+		Hide();
+		
+		//gameLocal.mpGame.SetFlagEntity(NULL, team);
+		if(team != player->team)
+		{
+			if (player->team == TEAM_MARINE)
+			{
+				player->GivePowerUp(POWERUP_CTF_STROGGFLAG, -1);
+			}
+			else if (player->team == TEAM_STROGG)
+			{
+				player->GivePowerUp(POWERUP_CTF_MARINEFLAG, -1);
+			}
+		}
+		else
+		{
+			PostEventMS(&EV_Remove, 0);
+			//ResetFlag(powerup);
+		}
+	}
+	
 	//gameLocal.mpGame.SetFlagEntity( NULL, team );
 
 	gameLocal.mpGame.AddPlayerTeamScore( player, 1 );
@@ -2224,8 +2247,33 @@ bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 	}
 	*/
 	//((rvCTFGameState*)gameLocal.mpGame.GetGameState())->SetFlagCarrier( team, player->entityNumber );
-
-	if ( spawnArgs.GetBool( "dropped" ) ) {
+	//
+	
+	if (spawnArgs.GetBool("dropped")) {
+		/*gameLocal.Printf("Picked up dropped flag\n");
+		if (team == 1 && player->team == 1)
+		{
+			GetPhysics()->SetContents(0);
+			Hide();
+			gameLocal.Printf("We're getting here\n");
+		}
+		else if (team == 0 && player->team == 0)
+		{
+			GetPhysics()->SetContents(0);
+			Hide();
+			gameLocal.Printf("We're getting here\n");
+		}
+		else
+		{
+			if (player->team == TEAM_MARINE)
+			{
+				player->GivePowerUp(POWERUP_CTF_STROGGFLAG, -1);
+			}
+			else if (player->team == TEAM_STROGG)
+			{
+				player->GivePowerUp(POWERUP_CTF_MARINEFLAG, -1);
+			}
+		}*/
 		PostEventMS( &EV_Remove, 0 );
 	}
 
@@ -2242,6 +2290,10 @@ rvItemCTFFlag::ResetFlag
 void rvItemCTFFlag::ResetFlag( int powerup ) {
 	idEntity* ent;
 	idDict dict;
+	if (spawned)
+	{
+		return;
+	}
 	for ( ent = gameLocal.spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next() ) {
 		// Make sure no players have the flag anymore
 // RAVEN BEGIN
@@ -2292,6 +2344,10 @@ void rvItemCTFFlag::ResetFlag( int powerup ) {
 	//ent->Spawn();
 	gameLocal.Printf("Got to boss buddy\n");
 	gameLocal.SpawnEntityDef(dict, &ent);
+	idVec3 spawnPoint(20.76035, -6.265, 145.36606);
+	ent->GetPhysics()->SetOrigin(spawnPoint);
+	spawned = true;
+	
 	//please be safe
 }
   

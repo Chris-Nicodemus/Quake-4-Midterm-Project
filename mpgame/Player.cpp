@@ -9327,6 +9327,8 @@ Called every tic for each player
 */
 extern bool barbarian;
 extern float barbarianDuration;
+
+extern bool spawned;
 void idPlayer::Think( void ) {
 	renderEntity_t *headRenderEnt;
 
@@ -9396,7 +9398,23 @@ void idPlayer::Think( void ) {
 	if ( !gameLocal.usercmds ) {
 		return;
 	}
+	
+	if (spawned && !(PowerUpActive(POWERUP_CTF_STROGGFLAG) || PowerUpActive(POWERUP_CTF_MARINEFLAG)))
+	{
+		idEntity* ent;
+		for (ent = gameLocal.spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next()) {
+			if (!ent->IsType(rvItemCTFFlag::GetClassType())) {
+				continue;
+			}
+			rvItemCTFFlag* flag;
+			flag = static_cast<rvItemCTFFlag*>(ent);
 
+			if (flag->spawnArgs.GetBool("dropped")) {
+				flag->PostEventMS(&EV_Remove, 0);
+			}
+
+		}
+	}
 #ifdef _XENON
 	// change the crosshair if it's modified
 	if ( cursor && weapon && g_crosshairColor.IsModified() ) {
@@ -13112,6 +13130,7 @@ idStr buddy = "monster_bossbuddy";
 //bool killed = false;
 extern int team;
 //extern int powerup;
+
 void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damage ) {
 
 	assert( !gameLocal.isClient );
@@ -13126,6 +13145,7 @@ void idPlayer::DamageFeedback( idEntity *victim, idEntity *inflictor, int &damag
 	if (victim->health - damage <= 0 && strcmp(victim->GetEntityDefName(),"monster_bossbuddy") == 0)
 	{
 		gameLocal.Printf("Killed buddy in player\n");
+		spawned = false;
 		if (team == TEAM_MARINE) 
 		{
 			GivePowerUp(POWERUP_CTF_STROGGFLAG, -1);

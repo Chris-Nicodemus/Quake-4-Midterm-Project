@@ -383,7 +383,7 @@ void rvMonsterBossBuddy::Damage( idEntity *inflictor, idEntity *attacker, const 
 				team = TEAM_MARINE;
 				gameLocal.Printf("Team Changed to MARINE\n");
 			}
-			gameLocal.Printf("We is Strogg\n");
+			//gameLocal.Printf("We is Strogg\n");
 		}
 	}
 	// get damage amount so we can decay the shields and check for ignoreShields
