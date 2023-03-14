@@ -3375,16 +3375,16 @@ void Cmd_AssassinTeleport_f(const idCmdArgs& args) {
 			if (barbarianCooldown == 0 && !barbarian) {
 				barbarian = true;
 				player->undying = true;
-				barbarianDuration = gameLocal.time + 4500.0;
-				barbarianCooldown = gameLocal.time + 34500.0;
+				barbarianDuration = gameLocal.time + 6000.0;
+				barbarianCooldown = gameLocal.time + 36000.0;
 				player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
 				player->mphud->HandleNamedEvent("main_notice");
 			}
 			else if (barbarianCooldown < gameLocal.time && !barbarian) {
 				barbarian = true;
 				player->undying = true;
-				barbarianDuration = gameLocal.time + 4500.0;
-				barbarianCooldown = gameLocal.time + 34500.0;
+				barbarianDuration = gameLocal.time + 6000.0;
+				barbarianCooldown = gameLocal.time + 36000.0;
 				player->mphud->SetStateString("main_notice_text", "UNDYING RAGE BEGUN");
 				player->mphud->HandleNamedEvent("main_notice");
 			}

@@ -2228,6 +2228,8 @@ bool rvItemCTFFlag::Pickup( idPlayer *player ) {
 			{
 				player->GivePowerUp(POWERUP_CTF_MARINEFLAG, -1);
 			}
+			player->mphud->SetStateString("main_notice_text", "BOUNTY RECLAIMED");
+			player->mphud->HandleNamedEvent("main_notice");
 		}
 		else
 		{

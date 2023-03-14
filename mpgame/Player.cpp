@@ -9356,7 +9356,7 @@ void idPlayer::Think( void ) {
 
 	if (poison && poisonDuration < gameLocal.time && poisonCount != 0)
 	{
-		health -= 5;
+		health -= 10;
 		poisonDuration = gameLocal.time + 6000.0;
 		poisonCount--;
 	}
@@ -9399,7 +9399,7 @@ void idPlayer::Think( void ) {
 		return;
 	}
 	
-	if (spawned && !(PowerUpActive(POWERUP_CTF_STROGGFLAG) || PowerUpActive(POWERUP_CTF_MARINEFLAG)))
+	if (spawned && !( PowerUpActive(POWERUP_CTF_STROGGFLAG) || PowerUpActive(POWERUP_CTF_MARINEFLAG) ) )
 	{
 		idEntity* ent;
 		for (ent = gameLocal.spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next()) {
@@ -9411,6 +9411,8 @@ void idPlayer::Think( void ) {
 
 			if (flag->spawnArgs.GetBool("dropped")) {
 				flag->PostEventMS(&EV_Remove, 0);
+				mphud->SetStateString("main_notice_text", "BOUNTY DENIED");
+				mphud->HandleNamedEvent("main_notice");
 			}
 
 		}
